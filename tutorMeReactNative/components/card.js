@@ -1,10 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { COLORS } from "../constant/theme";
 
 export default function Card({ item }) {
   return (
-    <View style={styles.card}>
+    <TouchableOpacity style={styles.card}>
       {/* <Text>Card</Text> */}
       <Text style={styles.cardTitle} numberOfLines={2}>
         {item.className}
@@ -25,7 +25,7 @@ export default function Card({ item }) {
           Rs: {item.price ? item.price : 0.0}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
