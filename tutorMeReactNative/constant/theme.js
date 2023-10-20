@@ -1,6 +1,6 @@
 const COLORS = {
   green: "#14A056", //login background, button background
-  backgroundGreen: "#C3FCDE", //background
+  backgroundGreen: "#DCF7E9", //background
   lightGreen: "#C1FDDD", //tags
   darkGreen: "#052D18", //login background
 
