@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 import { FontAwesome } from "@expo/vector-icons";
 
 export default function SearchBar({ handleSearch, searchText }) {

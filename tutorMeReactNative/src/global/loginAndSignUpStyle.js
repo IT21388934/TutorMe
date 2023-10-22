@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { COLORS, FONTS, SIZES } from "../constant/theme";
+import { COLORS, FONTS, SIZES } from "../constants/theme";
 
 const loginAndSignUpStyle = StyleSheet.create({
   container: {

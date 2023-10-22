@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
-import { COLORS } from "../../constant/theme";
-
-import Card from "../../components/card";
-import BottomNav from "../../components/TutorBottomNav";
-import SearchBar from "../../components/searchBar";
+import { COLORS } from "../../constants/theme";
+import Card from "../../components/Card";
+import SearchBar from "../../components/SearchBar";
+import { TutorFragment } from "../../layouts/TutorFragment";
 
 export default function MyClasses() {
-  const activeLink = "MyClasses";
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState([
     {
@@ -57,11 +55,7 @@ export default function MyClasses() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        {/* Your header content goes here */}
-      </View>
-
+    <TutorFragment activeLink="myClasses">
       <SearchBar handleSearch={handleSearch} searchText={searchText} />
       <FlatList
         data={filteredData.length > 0 ? filteredData : data}
@@ -70,20 +64,11 @@ export default function MyClasses() {
         contentContainerStyle={styles.gridContainer}
         renderItem={({ item }) => <Card item={item} />}
       />
-      <BottomNav activeLink={activeLink} />
-    </View>
+    </TutorFragment>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundGreen,
-  },
-  headerContainer: {
-    padding: 16,
-  },
-
   gridContainer: {
     // flexDirection: "row",
     // flexWrap: "wrap",

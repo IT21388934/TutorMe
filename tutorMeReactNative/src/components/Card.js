@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 
 export default function Card({ item }) {
   return (

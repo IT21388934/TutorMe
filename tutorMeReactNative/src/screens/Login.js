@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 import loginAndSignUpStyle from "../global/loginAndSignUpStyle";
 
-export default function Login() {
+export default function Login({ navigation }) {
   return (
     <LinearGradient
       colors={[COLORS.green, COLORS.darkGreen]}
@@ -65,7 +65,10 @@ export default function Login() {
             <TouchableOpacity style={loginAndSignUpStyle.loginButton}>
               <Text style={loginAndSignUpStyle.loginButtonText}>Login Now</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={loginAndSignUpStyle.newUser}>
+            <TouchableOpacity
+              style={loginAndSignUpStyle.newUser}
+              onPress={() => navigation.navigate("signUpOptions")}
+            >
               <Text style={loginAndSignUpStyle.forgotPasswordText}>
                 New user? Sign up
               </Text>
