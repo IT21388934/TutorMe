@@ -11,10 +11,16 @@ const COLORS = {
 
   orange: "#FA5804", // buttons, contrast color
 
-  blueButton: "#414141", // buttons
+  blueButton: "#0570DE", // buttons
   redButton: "#FB3D3D", // buttons
 
   warningYellow: "#F8CD20", //warning notification
+
+  darkRed: "#D30101", //dark text
+  darkYellow: "#BA9307", //dark text
+
+  tagsRed: "#FEA3A3", //tags
+  tagsYellow: "#FDFF9A", //tagsy
 };
 
 const FONT = {

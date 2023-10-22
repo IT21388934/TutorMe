@@ -17,3 +17,6 @@ export const search = require("../assets/icons/search.png");
 
 export const studyMaterialSelected = require("../assets/icons/open-book-selected.png");
 export const studyMaterial = require("../assets/icons/open-book-notselected.png");
+
+export const trash = require("../assets/icons/trash.png");
+export const editIcon = require("../assets/icons/pencilwhite.png");
