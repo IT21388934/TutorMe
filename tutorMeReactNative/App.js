@@ -86,7 +86,7 @@ function StudentInside() {
 
 export default function App() {
   const [user, setUser] = useState("notNull"); //set useState() for login screen
-  const [userType, setUserType] = useState("student"); //switch between student and tutor
+  const [userType, setUserType] = useState("tutor"); //switch between student and tutor
 
   return (
     <NavigationContainer>

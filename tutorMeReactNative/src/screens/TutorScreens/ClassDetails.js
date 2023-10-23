@@ -9,14 +9,14 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { COLORS } from "../../constant/theme";
+import { COLORS } from "../../constants/theme";
 import globalStyles from "../../global/globalStyles";
 
 import BottomNav from "../../components/TutorBottomNav";
 import Tags from "../../components/Tags";
 import SessionSlot from "../../components/SessionSlot";
 
-import { editIcon, trash } from "../../constant/images";
+import { editIcon, trash } from "../../constants/images";
 
 export default function ClassDetails() {
   const activeLink = "MyClasses";

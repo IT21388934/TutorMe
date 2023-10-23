@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
 
-import { COLORS } from "../../constant/theme";
+import { COLORS } from "../../constants/theme";
 
 import BottomNav from "../../components/TutorBottomNav";
-import WildClassCard from "../../components/wildClassCard";
+import WildClassCard from "../../components/WildClassCard";
 
 export default function NewRequest() {
   const activeLink = "MyClasses";

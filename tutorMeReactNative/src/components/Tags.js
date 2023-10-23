@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 
 export default function Tags({ tagText }) {
   return (

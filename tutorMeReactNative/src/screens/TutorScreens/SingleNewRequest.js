@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 
-import { COLORS } from "../../constant/theme";
+import { COLORS } from "../../constants/theme";
 import BottomNav from "../../components/TutorBottomNav";
 
 export default SingleNewRequest = () => {

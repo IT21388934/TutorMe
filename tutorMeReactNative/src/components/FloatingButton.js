@@ -4,7 +4,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign } from "@expo/vector-icons"; // You might need to install this package
 
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 
 const FloatingButton = ({ onPress }) => {
   return (

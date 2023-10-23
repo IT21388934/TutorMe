@@ -7,14 +7,14 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { COLORS } from "../../constant/theme";
+import { COLORS } from "../../constants/theme";
 
 import Card from "../../components/Card";
 import BottomNav from "../../components/TutorBottomNav";
 import SearchBar from "../../components/SearchBar";
 import FloatingButton from "../../components/FloatingButton";
 
-export default function MyClasses() {
+export default function MyClasses({ navigation }) {
   const [searchText, setSearchText] = useState("");
   const [data, setData] = useState([
     {
@@ -73,7 +73,7 @@ export default function MyClasses() {
       </View>
 
       <View style={styles.tagsContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("newRequests")}>
           <Text style={styles.newClassTag}>New Requests</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -94,7 +94,7 @@ export default function MyClasses() {
       />
       <FloatingButton onPress={handleFloatingButton} />
 
-      <BottomNav activeLink={activeLink} />
+      <BottomNav activeLink={"myClasses"} />
     </View>
   );
 }
@@ -107,7 +107,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     padding: 16,
   },
-
   gridContainer: {
     // flexDirection: "row",
     // flexWrap: "wrap",

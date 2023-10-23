@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 
 const globalStyles = StyleSheet.create({
   boldF24mb2: {
