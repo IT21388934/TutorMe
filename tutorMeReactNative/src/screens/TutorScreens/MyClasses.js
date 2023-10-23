@@ -1,9 +1,18 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
-import { COLORS } from "../../constants/theme";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { COLORS } from "../../constant/theme";
+
 import Card from "../../components/Card";
+import BottomNav from "../../components/TutorBottomNav";
 import SearchBar from "../../components/SearchBar";
-import { TutorFragment } from "../../layouts/TutorFragment";
+import FloatingButton from "../../components/FloatingButton";
 
 export default function MyClasses() {
   const [searchText, setSearchText] = useState("");
@@ -54,8 +63,27 @@ export default function MyClasses() {
     setFilteredData(filteredData);
   };
 
+  const handleFloatingButton = () => {
+    console.log("Floating button pressed");
+  };
   return (
-    <TutorFragment activeLink="myClasses">
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        {/* Your header content goes here */}
+      </View>
+
+      <View style={styles.tagsContainer}>
+        <TouchableOpacity>
+          <Text style={styles.newClassTag}>New Requests</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.bookedClassesTag}>Booked Class</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.completedClassTag}>Completed Class</Text>
+        </TouchableOpacity>
+      </View>
+
       <SearchBar handleSearch={handleSearch} searchText={searchText} />
       <FlatList
         data={filteredData.length > 0 ? filteredData : data}
@@ -64,15 +92,56 @@ export default function MyClasses() {
         contentContainerStyle={styles.gridContainer}
         renderItem={({ item }) => <Card item={item} />}
       />
-    </TutorFragment>
+      <FloatingButton onPress={handleFloatingButton} />
+
+      <BottomNav activeLink={activeLink} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundGreen,
+  },
+  headerContainer: {
+    padding: 16,
+  },
+
   gridContainer: {
     // flexDirection: "row",
     // flexWrap: "wrap",
     justifyContent: "space-between",
     padding: 16,
+  },
+
+  tagsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 16,
+  },
+
+  newClassTag: {
+    color: COLORS.primary,
+    fontWeight: "bold",
+    padding: 8,
+    backgroundColor: COLORS.green,
+    borderRadius: 8,
+  },
+
+  bookedClassesTag: {
+    color: COLORS.darkRed,
+    fontWeight: "bold",
+    padding: 8,
+    backgroundColor: COLORS.tagsRed,
+    borderRadius: 8,
+  },
+
+  completedClassTag: {
+    color: COLORS.darkYellow,
+    fontWeight: "bold",
+    padding: 8,
+    backgroundColor: COLORS.tagsYellow,
+    borderRadius: 8,
   },
 });
