@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { COLORS } from "../constants/theme";
 import BottomNav from "../components/StudentBottomNav";
 

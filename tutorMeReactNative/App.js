@@ -16,6 +16,8 @@ import StudentHome from "./src/screens/StudentScreens/StudentHome";
 import CategorySearch from "./src/screens/StudentScreens/CategorySearch";
 import StudyMaterials from "./src/screens/StudentScreens/StudyMaterials";
 import StudentProfile from "./src/screens/StudentScreens/StudentProfile";
+import ClassSearchResults from "./src/screens/StudentScreens/ClassSearchResults";
+import RequestSession from "./src/screens/StudentScreens/RequestSession";
 
 //tutor
 import TutorHome from "./src/screens/TutorScreens/TutorHome";
@@ -56,6 +58,7 @@ function StudentTabs() {
       <Tab.Screen name="search" component={CategorySearch} />
       <Tab.Screen name="studyMaterials" component={StudyMaterials} />
       <Tab.Screen name="profile" component={StudentProfile} />
+      <Tab.Screen name="searchResults" component={ClassSearchResults} />
     </Tab.Navigator>
   );
 }
@@ -70,13 +73,14 @@ function StudentInside() {
     >
       <Stack.Screen name="main" component={StudentTabs} />
       {/* other student screeens which doesn't contain bottom navigation bar */}
+      <Stack.Screen name="requestSession" component={RequestSession} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
   const [user, setUser] = useState("notNull"); //set useState() for login screen
-  const [userType, setUserType] = useState("tutor"); //switch between student and tutor
+  const [userType, setUserType] = useState("student"); //switch between student and tutor
 
   return (
     <NavigationContainer>

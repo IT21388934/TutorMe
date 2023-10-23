@@ -17,3 +17,24 @@ export const search = require("../assets/icons/search.png");
 
 export const studyMaterialSelected = require("../assets/icons/open-book-selected.png");
 export const studyMaterial = require("../assets/icons/open-book-notselected.png");
+
+export default {
+  //student search categories
+  computing: require("../assets/images/categories/computing.png"),
+  business: require("../assets/images/categories/business.png"),
+  engineering: require("../assets/images/categories/engineering.png"),
+  architecture: require("../assets/images/categories/architecture.png"),
+  law: require("../assets/images/categories/law.png"),
+  nursing: require("../assets/images/categories/nursing.png"),
+  psychology: require("../assets/images/categories/psychology.png"),
+  quantitySurveying: require("../assets/images/categories/quantitySurveying.png"),
+  biotechnology: require("../assets/images/categories/biotechnology.png"),
+  english: require("../assets/images/categories/english.png"),
+  science: require("../assets/images/categories/science.png"),
+  mathematics: require("../assets/images/categories/mathematics.png"),
+  hospitality: require("../assets/images/categories/hospitality.png"),
+  cookery: require("../assets/images/categories/cookery.png"),
+  sports: require("../assets/images/categories/sports.png"),
+
+  backButton: require("../assets/icons/backLight.png"),
+};

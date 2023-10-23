@@ -15,6 +15,8 @@ const COLORS = {
   redButton: "#FB3D3D", // buttons
 
   warningYellow: "#F8CD20", //warning notification
+
+  gray: "#D3D3D3",
 };
 
 const FONT = {
