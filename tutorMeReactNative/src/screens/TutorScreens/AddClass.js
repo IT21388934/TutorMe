@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -19,6 +19,9 @@ import Tags from "../../components/Tags";
 import TimeSlots from "../../components/TimeSlots";
 import SessionSlot from "../../components/SessionSlot";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
+import { addDoc, collection } from "firebase/firestore";
+import UserContext from "../../contexts/UserContext";
 
 import {
   ALERT_TYPE,
@@ -27,7 +30,11 @@ import {
   Toast,
 } from "react-native-alert-notification";
 
-export default function AddClass() {
+export default function AddClass({ navigation }) {
+  const { userData, setUserData } = useContext(UserContext);
+  const tutorFirstName = userData.firstName;
+  const tutorLastName = userData.lastName;
+
   const categories = [
     "Computing",
     "Engineering",
@@ -53,7 +60,7 @@ export default function AddClass() {
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     console.log("Form Submitted");
     console.log(timeSlots);
 
@@ -101,7 +108,11 @@ export default function AddClass() {
         textBody: "At least one time slot is required",
       });
     } else {
+      const userId = FIREBASE_AUTH.currentUser.uid;
       const data = {
+        userId,
+        tutorFirstName,
+        tutorLastName,
         classTitle,
         classDescription,
         categorySearch,
@@ -110,12 +121,33 @@ export default function AddClass() {
         duration,
         timeSlots,
       };
-      Toast.show({
-        type: ALERT_TYPE.SUCCESS,
-        title: "Success",
-        textBody: "Class added successfully",
-      });
-      console.log(data);
+      try {
+        const docRef = await addDoc(collection(FIRESTORE_DB, "Classes"), data);
+        console.log("Document written with ID: ", docRef.id);
+
+        // Optionally, you can clear the form inputs here
+        setClassDescription("");
+        setClassTitle("");
+        // setCategorySearch("");
+        setTags([]);
+        setPrice("");
+        setDuration("");
+        setTimeSlots([]);
+
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Success",
+          textBody: "Class added successfully",
+        });
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Error in submitting form",
+          textBody: "An error occurred while adding the class",
+        });
+      }
+      navigation.navigate("myClasses");
     }
   };
 
@@ -129,7 +161,7 @@ export default function AddClass() {
       <>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            {/* Your header content goes here */}
+            <Text style={styles.headerText}>Add a new Class</Text>
           </View>
           <ScrollView style={styles.scrollerContainer}>
             <View style={styles.formContainer}>
@@ -267,6 +299,16 @@ export default function AddClass() {
   );
 }
 const styles = StyleSheet.create({
+  headerContainer: {
+    padding: 18,
+    backgroundColor: COLORS.green,
+  },
+  headerText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: COLORS.white,
+  },
   container: {
     flex: 1,
     backgroundColor: COLORS.backgroundGreen,
