@@ -6,7 +6,7 @@ const COLORS = {
 
   white: "#FFFFFF", // fonts
   black: "#1B262E", // fonts
-  lightGray: "#E7ECF0", // fonts
+  lightGray: "#BFBFBF", // fonts
   darkGray: "#414141", // fonts
 
   orange: "#FA5804", // buttons, contrast color

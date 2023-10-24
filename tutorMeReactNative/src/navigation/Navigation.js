@@ -29,6 +29,7 @@ import TutorProfile from "../screens/TutorScreens/TutorProfile";
 import NewRequests from "../screens/TutorScreens/NewRequests";
 import SingleNewRequest from "../screens/TutorScreens/SingleNewRequest";
 import ClassDetails from "../screens/TutorScreens/ClassDetails";
+import AddClass from "../screens/TutorScreens/AddClass";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,6 +44,7 @@ function TutorTabs() {
       <Tab.Screen name="newRequests" component={NewRequests} />
       <Tab.Screen name="singleNewRequest" component={SingleNewRequest} />
       <Tab.Screen name="classDetails" component={ClassDetails} />
+      <Tab.Screen name="addClass" component={AddClass} />
     </Tab.Navigator>
   );
 }
