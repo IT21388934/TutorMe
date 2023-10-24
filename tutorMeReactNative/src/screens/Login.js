@@ -32,7 +32,7 @@ export default function Login({ navigation }) {
       // Display the ActivityIndicator for a minimum amount of time (e.g., 2 seconds)
       setTimeout(() => {
         setLoading(false);
-      }, 2000); // Adjust the delay as needed
+      }, 2500); // Adjust the delay as needed
     }
   };
 

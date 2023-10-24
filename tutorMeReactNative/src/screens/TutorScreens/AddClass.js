@@ -13,7 +13,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
-import { COLORS } from "../../constant/theme";
+import { COLORS } from "../../constants/theme";
 import { Picker } from "@react-native-picker/picker";
 import Tags from "../../components/Tags";
 import TimeSlots from "../../components/TimeSlots";

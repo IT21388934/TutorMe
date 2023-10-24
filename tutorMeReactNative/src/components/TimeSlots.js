@@ -16,7 +16,7 @@ import {
 } from "react-native-alert-notification";
 
 import { Picker } from "@react-native-picker/picker";
-import { COLORS } from "../constant/theme";
+import { COLORS } from "../constants/theme";
 import { Entypo } from "@expo/vector-icons";
 
 import DateTimePicker from "@react-native-community/datetimepicker";

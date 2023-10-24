@@ -65,6 +65,7 @@ export default function MyClasses({ navigation }) {
 
   const handleFloatingButton = () => {
     console.log("Floating button pressed");
+    navigation.navigate("addClass");
   };
   return (
     <View style={styles.container}>
