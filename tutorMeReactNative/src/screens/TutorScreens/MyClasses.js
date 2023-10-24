@@ -39,7 +39,7 @@ export default function MyClasses({ navigation }) {
   useEffect(() => {
     // Define a query to get classes where categorySearch is "Computing" for the current user.
     const q = query(
-      collection(FIRESTORE_DB, "Classes"),
+      collection(FIRESTORE_DB, "classes"),
       where("userId", "==", userId)
     );
 
@@ -49,9 +49,18 @@ export default function MyClasses({ navigation }) {
         const classesData = [];
 
         querySnapshot.forEach((doc) => {
-          classesData.push(doc.data());
+          // Include the document ID along with the data
+          const classDataWithId = {
+            id: doc.id, // Add the document ID here
+            ...doc.data(),
+          };
+
+          classesData.push(classDataWithId);
         });
         console.log("classesData: ", classesData);
+        classesData.forEach((classData) => {
+          console.log("id", classData.id);
+        });
         setData(classesData);
         setFilteredData(classesData);
       } catch (error) {

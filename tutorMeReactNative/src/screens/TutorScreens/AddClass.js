@@ -34,6 +34,9 @@ export default function AddClass({ navigation }) {
   const { userData, setUserData } = useContext(UserContext);
   const tutorFirstName = userData.firstName;
   const tutorLastName = userData.lastName;
+  const profilePicture = userData.photoURL;
+
+  const currentDate = new Date();
 
   const categories = [
     "Computing",
@@ -113,6 +116,7 @@ export default function AddClass({ navigation }) {
         userId,
         tutorFirstName,
         tutorLastName,
+        profilePicture,
         classTitle,
         classDescription,
         categorySearch,
@@ -120,9 +124,10 @@ export default function AddClass({ navigation }) {
         price,
         duration,
         timeSlots,
+        addedAt: currentDate,
       };
       try {
-        const docRef = await addDoc(collection(FIRESTORE_DB, "Classes"), data);
+        const docRef = await addDoc(collection(FIRESTORE_DB, "classes"), data);
         console.log("Document written with ID: ", docRef.id);
 
         // Optionally, you can clear the form inputs here
