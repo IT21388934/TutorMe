@@ -6,6 +6,7 @@ import MyClasses from "./screeens/TutorScreens/MyClasses";
 import NewRequests from "./screeens/TutorScreens/NewRequests";
 import SingleNewRequest from "./screeens/TutorScreens/SingleNewRequest";
 import ClassDetails from "./screeens/TutorScreens/ClassDetails";
+import AddClass from "./screeens/TutorScreens/AddClass";
 
 export default function App() {
   return (
@@ -14,7 +15,8 @@ export default function App() {
       {/* <MyClasses /> */}
       {/* <NewRequests/> */}
       {/* <SingleNewRequest /> */}
-      <ClassDetails />
+      {/* <ClassDetails /> */}
+      <AddClass />
       <StatusBar style="auto" />
     </>
   );
