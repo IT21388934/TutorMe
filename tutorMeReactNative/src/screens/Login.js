@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   ImageBackground,
   StyleSheet,
@@ -7,12 +7,35 @@ import {
   View,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS } from "../constants/theme";
 import loginAndSignUpStyle from "../global/loginAndSignUpStyle";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../FirebaseConfig";
+import UserContext from "../contexts/UserContext";
 
 export default function Login({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const loginUser = async () => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+    } catch (error) {
+      alert("Sign in failed: " + error.message);
+      console.log(error);
+    } finally {
+      // Display the ActivityIndicator for a minimum amount of time (e.g., 2 seconds)
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Adjust the delay as needed
+    }
+  };
+
   return (
     <LinearGradient
       colors={[COLORS.green, COLORS.darkGreen]}
@@ -34,7 +57,10 @@ export default function Login({ navigation }) {
               />
               <TextInput
                 style={loginAndSignUpStyle.input}
-                placeholder="User name"
+                placeholder="Email"
+                onChangeText={(email) => setEmail(email)}
+                autoCapitalize="none"
+                autoCorrect={false}
                 placeholderTextColor={COLORS.darkGray}
               />
             </View>
@@ -46,6 +72,10 @@ export default function Login({ navigation }) {
               <TextInput
                 style={loginAndSignUpStyle.input}
                 placeholder="Password"
+                onChangeText={(password) => setPassword(password)}
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry={true}
                 placeholderTextColor={COLORS.darkGray}
               />
             </View>
@@ -62,8 +92,11 @@ export default function Login({ navigation }) {
                 Remember Me
               </Text>
             </View>
-            <TouchableOpacity style={loginAndSignUpStyle.loginButton}>
-              <Text style={loginAndSignUpStyle.loginButtonText}>Login Now</Text>
+            <TouchableOpacity
+              style={loginAndSignUpStyle.loginButton}
+              onPress={loginUser}
+            >
+              <Text style={loginAndSignUpStyle.loginButtonText}>Login</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={loginAndSignUpStyle.newUser}
@@ -73,6 +106,7 @@ export default function Login({ navigation }) {
                 New user? Sign up
               </Text>
             </TouchableOpacity>
+            {loading && <ActivityIndicator />}
           </View>
         </View>
       </ImageBackground>
