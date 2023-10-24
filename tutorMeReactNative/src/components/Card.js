@@ -7,7 +7,7 @@ export default function Card({ item }) {
     <TouchableOpacity style={styles.card}>
       {/* <Text>Card</Text> */}
       <Text style={styles.cardTitle} numberOfLines={2}>
-        {item.className}
+        {item.classTitle}
       </Text>
       {item.classDescription != " " ? (
         <Text style={styles.cardDescription} numberOfLines={2}>
@@ -19,7 +19,7 @@ export default function Card({ item }) {
       ) : null}
       <View style={styles.cardBottom}>
         <Text style={styles.duration} numberOfLines={1}>
-          {item.duration}
+          {item.duration} hrs
         </Text>
         <Text style={styles.price} numberOfLines={1}>
           Rs: {item.price ? item.price : 0.0}

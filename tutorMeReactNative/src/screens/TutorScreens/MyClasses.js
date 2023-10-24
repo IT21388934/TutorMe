@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,45 +13,13 @@ import Card from "../../components/Card";
 import BottomNav from "../../components/TutorBottomNav";
 import SearchBar from "../../components/SearchBar";
 import FloatingButton from "../../components/FloatingButton";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 export default function MyClasses({ navigation }) {
+  const userId = FIREBASE_AUTH.currentUser.uid;
   const [searchText, setSearchText] = useState("");
-  const [data, setData] = useState([
-    {
-      id: 1,
-      className: "Oject-Oriented Programming",
-      classDescription: "Learn the basics of OOP",
-      duration: "2 Hr",
-      price: "2000",
-      //   classTutor: "John Doe",
-    },
-    {
-      id: 2,
-      className: "Java Basic Programming",
-      classDescription: "class Description",
-      duration: "2 Hr",
-      price: "2000",
-      //   classTutor: "",
-    },
-    {
-      id: 3,
-      className: "Data Structure and Algorithm",
-      classDescription: "Learn the basics of OOP , line 2",
-      duration: "2 Hr",
-      price: "2000",
-      //   classTutor: "John Doe",
-    },
-    {
-      id: 4,
-      className: "Kotlin Mobile application development",
-      classDescription: "Learn the basics of OOP , line 2",
-      duration: "2 Hr",
-      price: "2000",
-      //   classTutor: "John Doe",
-    },
-
-    // Add more data items here
-  ]);
+  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
 
   const handleSearch = (text) => {
@@ -67,10 +35,37 @@ export default function MyClasses({ navigation }) {
     console.log("Floating button pressed");
     navigation.navigate("addClass");
   };
+
+  useEffect(() => {
+    // Define a query to get classes where categorySearch is "Computing" for the current user.
+    const q = query(
+      collection(FIRESTORE_DB, "Classes"),
+      where("userId", "==", userId)
+    );
+
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(q);
+        const classesData = [];
+
+        querySnapshot.forEach((doc) => {
+          classesData.push(doc.data());
+        });
+        console.log("classesData: ", classesData);
+        setData(classesData);
+        setFilteredData(classesData);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        {/* Your header content goes here */}
+        <Text style={styles.headerText}>My Classes</Text>
       </View>
 
       <View style={styles.tagsContainer}>
@@ -88,7 +83,7 @@ export default function MyClasses({ navigation }) {
       <SearchBar handleSearch={handleSearch} searchText={searchText} />
       <FlatList
         data={filteredData.length > 0 ? filteredData : data}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         numColumns={2} // Set the number of columns to 2
         contentContainerStyle={styles.gridContainer}
         renderItem={({ item }) => <Card item={item} />}
@@ -106,7 +101,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundGreen,
   },
   headerContainer: {
-    padding: 16,
+    padding: 18,
+    backgroundColor: COLORS.green,
+  },
+  headerText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: COLORS.white,
   },
   gridContainer: {
     // flexDirection: "row",
