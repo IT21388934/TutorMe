@@ -1,4 +1,3 @@
-import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import {
 	addDoc,
@@ -17,22 +16,21 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { FIRESTORE_DB } from "../../../FirebaseConfig";
-import SearchBar from "../../components/SearchBar";
-import { COLORS } from "../../constants/theme";
-import { StudentFragment } from "../../layouts/StudentFragment";
+import { FIRESTORE_DB } from "../../../../FirebaseConfig";
+import SearchBar from "../../../components/SearchBar";
+import { COLORS } from "../../../constants/theme";
+import { TutorFragment } from "../../../layouts/TutorFragment";
 
-const StudyMaterials = () => {
-	const [filteredData, setFilteredData] = useState([]);
+const SMList = () => {
 	const navigation = useNavigation();
 	const [searchText, setSearchText] = useState("");
 	const [data, setData] = useState();
-	const [selectedValue, setSelectedValue] = useState();
 
 	useEffect(() => {
 		const smRef = collection(FIRESTORE_DB, "studyMaterials");
+		const queryRef = query(smRef, where("author", "==", "Nethmi Tharaka"));
 
-		const subscriber = onSnapshot(smRef, {
+		const subscriber = onSnapshot(queryRef, {
 			next: (snapshot) => {
 				const items = [];
 				snapshot.docs.forEach((doc) => {
@@ -48,6 +46,8 @@ const StudyMaterials = () => {
 		return () => subscriber();
 	}, []);
 
+	const [filteredData, setFilteredData] = useState([]);
+
 	const handleSearch = (text) => {
 		const filteredData = data.filter((item) => {
 			return item.title.toLowerCase().includes(text.toLowerCase());
@@ -57,14 +57,30 @@ const StudyMaterials = () => {
 		setFilteredData(filteredData);
 	};
 
-	const handleCategory = (text) => {
-		const filteredData = data.filter((item) => {
-			return item.category.toLowerCase().includes(text.toLowerCase());
-		});
-
-		setSelectedValue(text);
-		setFilteredData(filteredData);
+	const renderListEdit = (item) => {
+		return (
+			<View style={styles.itemContainer}>
+				<TouchableOpacity
+					style={styles.item}
+					onPress={() => navigation.navigate("smView", { id: item.id })}
+				>
+					<Text style={{ fontSize: 25 }}> 📗 </Text>
+					<Text style={styles.itemText}>{item.title}</Text>
+					<View style={styles.editButton}>
+						<Text
+							style={styles.editText}
+							onPress={() =>
+								navigation.navigate("smEdit", { id: item.id })
+							}
+						>
+							📝 Edit
+						</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+		);
 	};
+
 	const renderListDownload = (item) => {
 		return (
 			<View style={styles.itemContainer}>
@@ -105,7 +121,7 @@ const StudyMaterials = () => {
 	};
 
 	return (
-		<StudentFragment activeLink="studyMaterials">
+		<TutorFragment activeLink="profile">
 			<View style={{ backgroundColor: COLORS.green, height: "10%" }}>
 				<Text
 					style={{
@@ -119,35 +135,55 @@ const StudyMaterials = () => {
 				</Text>
 			</View>
 			<SearchBar handleSearch={handleSearch} searchText={searchText} />
-			{/* Picker Input for Category */}
-			<Picker
-				selectedValue={selectedValue}
-				style={styles.input}
-				onValueChange={(itemValue) => handleCategory(itemValue)}
-			>
-				<Picker.Item label="🗂 | Select Category" value="Category" />
-				<Picker.Item label="All" value="All" />
-				<Picker.Item label="Mathematics" value="Mathematics" />
-				<Picker.Item label="English" value="English" />
-				<Picker.Item label="Computer Science" value="Computer Science" />
-				<Picker.Item label="Biology" value="Biology" />
-				<Picker.Item label="Engineering" value="Engineering" />
-				<Picker.Item label="Other" value="Other" />
-			</Picker>
+
 			<FlatList
 				data={filteredData.length > 0 ? filteredData : data}
 				keyExtractor={(item) => item.id.toString()}
-				renderItem={({ item }) => renderListDownload(item)}
+				renderItem={({ item }) => renderListEdit(item)}
 				//centerContent="true"
+				style={{ height: "100%" }}
 				scrollEnabled={true}
 			/>
-		</StudentFragment>
+			<View style={styles.addContainer}>
+				<TouchableOpacity
+					style={styles.addButton}
+					onPress={() => navigation.navigate("smAdd")}
+				>
+					<Text style={styles.addIcon}>+</Text>
+				</TouchableOpacity>
+			</View>
+		</TutorFragment>
 	);
 };
 
-export default StudyMaterials;
+export default SMList;
 
 const styles = StyleSheet.create({
+	addContainer: {
+		margin: 10,
+		justifyContent: "flex-end",
+		alignItems: "flex-end",
+	},
+	addButton: {
+		width: 50,
+		height: 50,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: COLORS.green,
+		borderRadius: 50,
+		color: "white",
+		shadowOpacity: 0.4,
+		shadowRadius: 4.5,
+		elevation: 10,
+		margin: 15,
+	},
+	addIcon: {
+		color: "white",
+		top: -10,
+		fontSize: 50,
+		// alignSelf: "center",
+		justifyContent: "center",
+	},
 	itemContainer: {
 		flexDirection: "row",
 		alignItems: "center",
@@ -218,12 +254,5 @@ const styles = StyleSheet.create({
 	},
 	imgDoc: {
 		fontSize: 30,
-	},
-	input: {
-		backgroundColor: "white",
-		width: "auto",
-		borderWidth: 1,
-		padding: 10,
-		margin: 15,
 	},
 });
