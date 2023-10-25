@@ -37,6 +37,13 @@ import StudyMaterialsList from "../screens/TutorScreens/StudyMaterials/SMList";
 import ViewStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMViewDetails";
 import TutorHome from "../screens/TutorScreens/TutorHome";
 import TutorProfile from "../screens/TutorScreens/TutorProfile";
+import ClassDetails from "../screens/TutorScreens/ClassDetails";
+import AddClass from "../screens/TutorScreens/AddClass";
+import EditClassDetails from "../screens/TutorScreens/EditClassDetails";
+import TutorSessions from "../screens/TutorScreens/TutorSessions";
+import BookedClasses from "../screens/TutorScreens/BookedClasses";
+import SingleBooked from "../screens/TutorScreens/SingleBooked";
+import CompletedClasses from "../screens/TutorScreens/CompletedClasses";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,6 +63,11 @@ function TutorTabs() {
 			<Tab.Screen name="smAdd" component={AddStudyMaterial} />
 			<Tab.Screen name="smEdit" component={EditStudyMaterial} />
 			<Tab.Screen name="smView" component={ViewStudyMaterial} />
+			<Tab.Screen name="editClassDetails" component={EditClassDetails} />
+			<Tab.Screen name="mySessions" component={TutorSessions} />
+			<Tab.Screen name="bookedClasses" component={BookedClasses} />
+			<Tab.Screen name="singleBooked" component={SingleBooked} />
+			<Tab.Screen name="completedClasses" component={CompletedClasses} />
 		</Tab.Navigator>
 	);
 }
@@ -96,6 +108,10 @@ function StudentInside() {
 			<Stack.Screen name="main" component={StudentTabs} />
 			{/* other student screeens which doesn't contain bottom navigation bar */}
 			<Stack.Screen name="requestSession" component={RequestSession} />
+			<Stack.Screen name="mySessions" component={MySessions} />
+			<Stack.Screen name="sessionDetails" component={SessionDetails} />
+			<Stack.Screen name="searchResults" component={ClassSearchResults} />
+			<Stack.Screen name="editSession" component={EditSession} />
 		</Stack.Navigator>
 	);
 }
