@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -16,14 +16,21 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import StudentLayout from "../../layouts/StudentLayout";
 import { COLORS } from "../../constants/theme";
 import { FontAwesome } from "@expo/vector-icons";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
+import { addDoc, collection } from "firebase/firestore";
+import UserContext from "../../contexts/UserContext";
 
-const RequestSession = () => {
+const RequestSession = ({ route }) => {
+  const { classDetails } = route.params;
+
   const [date, setDate] = useState();
   const [timeslot, setTimeslot] = useState("Morning");
   const [reason, setReason] = useState("");
   const [numStudents, setNumStudents] = useState(1);
   const [mode, setMode] = useState("Online");
   const [showDatePicker, setShowDatePicker] = useState(false); // State to show the date picker
+
+  const { userData, setUserData } = useContext(UserContext);
 
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
@@ -32,15 +39,55 @@ const RequestSession = () => {
     }
   };
 
-  const handleFormSubmit = () => {
-    // Handle form submission here, e.g., send data to the server
-    console.log("Form submitted with data:", {
-      date,
+  // Define a function to get the day of the week from a date string
+  const getDayOfWeek = (dateString) => {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const date = new Date(dateString);
+    const dayOfWeekIndex = date.getDay();
+    return daysOfWeek[dayOfWeekIndex];
+  };
+
+  // Define a function to get time slots for the selected day
+  const getTimeSlotsForDay = (selectedDate) => {
+    const selectedDay = getDayOfWeek(selectedDate);
+    const timeSlotsForDay = classDetails.timeSlots.filter((timeSlot) => {
+      return timeSlot.day === selectedDay;
+    });
+
+    return timeSlotsForDay;
+  };
+
+  const handleFormSubmit = async () => {
+    const doc = await addDoc(collection(FIRESTORE_DB, "sessions"), {
+      classId: classDetails.id,
+      tutorId: classDetails.userId,
+      tutorName: classDetails.tutorFirstName + " " + classDetails.tutorLastName,
+      tutorImage: classDetails.profilePicture,
+      classTitle: classDetails.classTitle,
+      classCategory: classDetails.categorySearch,
+      classDescription: classDetails.classDescription,
+      classTags: classDetails.tags,
+      price: classDetails.price,
+      date: date.toLocaleDateString(),
       timeslot,
       reason,
-      numStudents,
+      numOfStudents: numStudents,
       mode,
+      studentId: FIREBASE_AUTH.currentUser.uid,
+      studentName: userData.firstName + " " + userData.lastName,
+      status: "pending",
+      submittedAt: new Date(),
     });
+
+    alert("Session requested");
   };
 
   return (
@@ -52,20 +99,22 @@ const RequestSession = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.tutorInfo}>
             <Image
-              source={{
-                uri: "https://hungercenter.org/wp-content/uploads/2015/08/EF_Johnson_Emily.jpg",
-              }}
+              source={{ uri: classDetails.profilePicture }}
               style={styles.tutorImage}
             />
             <View style={styles.tutorDetails}>
-              <Text style={styles.tutorName}>Suresh Sankalpa</Text>
+              <Text style={styles.tutorName}>
+                {classDetails.tutorFirstName + " " + classDetails.tutorLastName}
+              </Text>
               <Text style={styles.tutorFaculty}>Faculty of Computing</Text>
               <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
             </View>
           </View>
-          <Text style={styles.className}>Object Oriented Programming</Text>
+          <Text style={styles.className}>{classDetails.classTitle}</Text>
           <View style={styles.priceContainer}>
-            <Text style={styles.price}>Price per session: Rs. 1000.00</Text>
+            <Text style={styles.price}>
+              Price per session: Rs. {classDetails.price}.00
+            </Text>
           </View>
           <View style={styles.formContainer}>
             <Text>Date</Text>
@@ -103,9 +152,14 @@ const RequestSession = () => {
                     selectedValue={timeslot}
                     onValueChange={(itemValue) => setTimeslot(itemValue)}
                   >
-                    <Picker.Item label="Morning" value="Morning" />
-                    <Picker.Item label="Afternoon" value="Afternoon" />
-                    <Picker.Item label="Evening" value="Evening" />
+                    {/* Map the time slots for the selected day to Picker.Item components */}
+                    {getTimeSlotsForDay(date).map((timeSlot, index) => (
+                      <Picker.Item
+                        key={index}
+                        label={`${timeSlot.startTime} - ${timeSlot.endTime}`}
+                        value={`${timeSlot.startTime} - ${timeSlot.endTime}`}
+                      />
+                    ))}
                   </Picker>
                 </View>
               </>

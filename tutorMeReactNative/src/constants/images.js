@@ -40,4 +40,5 @@ export default {
   sports: require("../assets/images/categories/sports.png"),
 
   backButton: require("../assets/icons/backLight.png"),
+  empty: require("../assets/images/empty.png"),
 };

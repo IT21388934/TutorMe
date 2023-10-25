@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -6,62 +7,105 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { StudentFragment } from "../../layouts/StudentFragment";
 import { COLORS } from "../../constants/theme";
-
-const classes = [
-  {
-    tutorName: "John Smith",
-    tutorImage:
-      "https://www.lipscomb.edu/sites/default/files/images-staff/2018-11/Smith_John_web2.jpg",
-    className: "Introduction to Mathematics",
-    duration: "2 hours",
-    price: 2000,
-  },
-  {
-    tutorName: "Emily Johnson",
-    tutorImage:
-      "https://hungercenter.org/wp-content/uploads/2015/08/EF_Johnson_Emily.jpg",
-    className: "Data Structures & Algorithms",
-    duration: "2 hours",
-    price: 4500,
-  },
-  {
-    tutorName: "Sarah Lee",
-    tutorImage:
-      "https://media.licdn.com/dms/image/C4D03AQEC8_pMsY_1Rw/profile-displayphoto-shrink_800_800/0/1650918032785?e=2147483647&v=beta&t=ZV5DErFmnaJr2DKJ05ImLyGptcSb8jrxIzpCjwTozOU",
-    className: "Probability & Statistics",
-    duration: "2 hours",
-    price: 3000,
-  },
-  {
-    tutorName: "Michael Davis",
-    tutorImage:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAbZ7PP8GurMxCUri_Ktrbu3MT166_29TJ7g&usqp=CAU",
-    className: "Introduction to Programming",
-    duration: "1 hour",
-    price: 5000,
-  },
-];
+import { FIRESTORE_DB } from "../../../FirebaseConfig";
+import images from "../../constants/images";
 
 const ClassSearchResults = ({ route, navigation }) => {
   // Retrieve the parameter from the route prop
   const { searchText } = route.params;
   const { category } = route.params;
 
+  const [allClasses, setAllClasses] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [noResults, setNoResults] = useState(false);
+
+  useEffect(() => {
+    setLoading(true); // Set loading to true
+
+    const classesQuery = query(
+      collection(FIRESTORE_DB, "classes"),
+      orderBy("addedAt", "desc")
+    );
+
+    const subscriber = onSnapshot(classesQuery, {
+      next: (snapshot) => {
+        const classes = [];
+        snapshot.docs.forEach((doc) => {
+          classes.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        setAllClasses(classes);
+        // console.log(classes);
+
+        // Check if there are no results
+        if (category || searchText) {
+          const filtered = classes.filter((item) => {
+            return (
+              (!category || item.categorySearch === category) &&
+              (!searchText ||
+                item.classTitle
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase()) ||
+                item.classDescription
+                  .toLowerCase()
+                  .includes(searchText.toLowerCase()) ||
+                item.tags.some((tag) =>
+                  tag.toLowerCase().includes(searchText.toLowerCase())
+                ))
+            );
+          });
+          setFilteredClasses(filtered);
+          setNoResults(filtered.length === 0); // Set noResults flag
+        } else {
+          setFilteredClasses(classes);
+        }
+        setLoading(false); // Set loading to false
+      },
+    });
+    return () => subscriber();
+  }, []);
+
   const renderClassItem = ({ item }) => (
     <TouchableOpacity
       style={styles.classCard}
-      onPress={() => navigation.navigate("requestSession")}
+      onPress={() =>
+        navigation.navigate("requestSession", { classDetails: item })
+      }
     >
       <View style={styles.classCardTop}>
-        <Text style={styles.classTutor}>{item.tutorName}</Text>
-        <Image source={{ uri: item.tutorImage }} style={styles.tutorImage} />
+        <Text style={styles.classTutor}>
+          {item.tutorFirstName + " " + item.tutorLastName}
+        </Text>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: item.profilePicture }}
+            style={styles.tutorImage}
+          />
+        </View>
       </View>
-      <Text style={styles.className}>{item.className}</Text>
+      <Text style={styles.className}>
+        {item.classTitle.length > 30
+          ? item.classTitle.slice(0, 30) + "..."
+          : item.classTitle}
+      </Text>
       <View style={styles.classCardBottom}>
-        <Text style={styles.classDuration}>{item.duration}</Text>
+        <Text style={styles.classDuration}>
+          {item.duration + " " + (item.duration > 1 ? "Hours" : "Hour")}
+        </Text>
         <View style={styles.classPriceContainer}>
           <Text style={styles.classPrice}>Rs. {item.price}</Text>
         </View>
@@ -74,13 +118,24 @@ const ClassSearchResults = ({ route, navigation }) => {
       <View style={styles.headerContainer}>
         <Text style={styles.headerText}>Classes</Text>
       </View>
-      <FlatList
-        data={classes}
-        renderItem={renderClassItem}
-        keyExtractor={(item) => item.name}
-        numColumns={2}
-        style={styles.classList}
-      />
+      {loading ? (
+        <View style={styles.activityIndicator}>
+          <ActivityIndicator size="large" color={COLORS.green} />
+        </View>
+      ) : noResults ? (
+        <View style={styles.activityIndicator}>
+          <Image source={images.empty} style={styles.empty} />
+          <Text style={styles.emptyText}>No classes found</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredClasses}
+          renderItem={renderClassItem}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          style={styles.classList}
+        />
+      )}
     </StudentFragment>
   );
 };
@@ -114,6 +169,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  imageContainer: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
   tutorImage: {
     width: 32,
     height: 32,
@@ -121,14 +180,16 @@ const styles = StyleSheet.create({
   },
   className: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
     marginTop: 5,
     marginBottom: 6,
     flex: 1,
+    textAlignVertical: "center", //adjust
   },
   classTutor: {
     fontSize: 14,
-    color: COLORS.darkGray,
+    color: COLORS.black,
+    flex: 4,
   },
   classCardBottom: {
     display: "flex",
@@ -142,7 +203,7 @@ const styles = StyleSheet.create({
     color: COLORS.darkGray,
   },
   classPriceContainer: {
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: COLORS.priceGray,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 2,
@@ -151,5 +212,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: COLORS.orange,
+  },
+  activityIndicator: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  empty: {
+    width: 160,
+    height: 160,
+  },
+  emptyText: {
+    fontSize: 18,
+    marginTop: 20,
+    color: "#808080",
+    textAlign: "center",
   },
 });

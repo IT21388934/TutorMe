@@ -23,6 +23,21 @@ const COLORS = {
 
   tagsRed: "#FEA3A3", //tags
   tagsYellow: "#FDFF9A", //tagsy
+
+  priceGray: "#E7ECF0",
+
+  notificationLightYellow: "#B18D00",
+  notificationDarkYellow: "#FCFEA3",
+  notificationLightGreen: "#50CC8B",
+  notificationDarkGreen: "#085E30",
+  notificationLightRed: "#FEA3A3",
+  notificationDarkRed: "#D30101",
+  notificationLightBlue: "#C0CDEE",
+  notificationDarkBlue: "#0A13EC",
+  notificationDarkBlue2: "#0B5974",
+  notificationLightBlue2: "#66B9D7",
+  notificationDarkBlue3: "#446469",
+  notificationLightBlue3: "#ABDBE3",
 };
 
 const FONT = {

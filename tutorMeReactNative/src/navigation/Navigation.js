@@ -20,6 +20,9 @@ import StudyMaterials from "../screens/StudentScreens/StudyMaterials";
 import StudentProfile from "../screens/StudentScreens/StudentProfile";
 import ClassSearchResults from "../screens/StudentScreens/ClassSearchResults";
 import RequestSession from "../screens/StudentScreens/RequestSession";
+import MySessions from "../screens/StudentScreens/MySessions";
+import SessionDetails from "../screens/StudentScreens/SessionDetails";
+import EditSession from "../screens/StudentScreens/EditSession";
 
 //tutor
 import TutorHome from "../screens/TutorScreens/TutorHome";
@@ -68,7 +71,6 @@ function StudentTabs() {
       <Tab.Screen name="search" component={CategorySearch} />
       <Tab.Screen name="studyMaterials" component={StudyMaterials} />
       <Tab.Screen name="profile" component={StudentProfile} />
-      <Tab.Screen name="searchResults" component={ClassSearchResults} />
     </Tab.Navigator>
   );
 }
@@ -84,6 +86,10 @@ function StudentInside() {
       <Stack.Screen name="main" component={StudentTabs} />
       {/* other student screeens which doesn't contain bottom navigation bar */}
       <Stack.Screen name="requestSession" component={RequestSession} />
+      <Stack.Screen name="mySessions" component={MySessions} />
+      <Stack.Screen name="sessionDetails" component={SessionDetails} />
+      <Stack.Screen name="searchResults" component={ClassSearchResults} />
+      <Stack.Screen name="editSession" component={EditSession} />
     </Stack.Navigator>
   );
 }

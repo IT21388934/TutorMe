@@ -60,9 +60,10 @@ const CategorySearch = ({ navigation }) => {
         />
         <TouchableOpacity
           style={styles.searchIconContainer}
-          onPress={() =>
-            navigation.navigate("searchResults", { searchText: searchText })
-          }
+          onPress={() => {
+            navigation.navigate("searchResults", { searchText: searchText });
+            setSearchText("");
+          }}
         >
           <FontAwesome name="search" size={24} color="white" />
         </TouchableOpacity>
