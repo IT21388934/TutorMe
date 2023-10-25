@@ -23,6 +23,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { doc, getDoc, collection, updateDoc } from "firebase/firestore";
 import { saveUserProfileImage } from "../../services/user";
 import UserContext from "../../contexts/UserContext";
+import { Picker } from "@react-native-picker/picker";
 
 const EditProfile = () => {
   const { fetchUserData } = useContext(UserContext);
@@ -173,13 +174,9 @@ const EditProfile = () => {
             <Text style={styles.title}> Edit Profile</Text>
 
             <View style={styles.buttonImage}>
-              <TouchableOpacity onPress={pickImage}>
+              <TouchableOpacity onPress={() => handleImageUpload()}>
                 <Image
-                  source={
-                    profileImage === null
-                      ? require("../../assets/images/profile.png")
-                      : { uri: profileImage }
-                  }
+                  source={require("../../assets/images/profile.png")}
                   style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
@@ -252,7 +249,7 @@ const EditProfile = () => {
               />
             </View>
 
-            <View style={styles.inputField}>
+            {/* <View style={styles.inputField}>
               <Image
                 source={require("../../assets/icons/neutral.png")}
                 style={styles.inputFieldIcon}
@@ -265,6 +262,18 @@ const EditProfile = () => {
                 autoCorrect={false}
                 placeholderTextColor={COLORS.darkGray}
               />
+            </View> */}
+            <View style={styles.pickerInputContainer}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={gender}
+                  onValueChange={(itemValue) => setGender(itemValue)}
+                >
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Other" value="Other" />
+                </Picker>
+              </View>
             </View>
 
             <View style={styles.inputField}>
@@ -333,7 +342,7 @@ const EditProfile = () => {
               />
             </View>
 
-            <View style={styles.inputField}>
+            {/* <View style={styles.inputField}>
               <Image
                 source={require("../../assets/icons/calendar.png")}
                 style={styles.inputFieldIcon}
@@ -346,9 +355,22 @@ const EditProfile = () => {
                 autoCorrect={false}
                 placeholderTextColor={COLORS.darkGray}
               />
+            </View> */}
+            <View style={styles.pickerInputContainer}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={academicYear}
+                  onValueChange={(itemValue) => setAcademicYear(itemValue)}
+                >
+                  <Picker.Item label="1st Year" value="1st Year" />
+                  <Picker.Item label="2nd Year" value="2nd Year" />
+                  <Picker.Item label="3rd Year" value="3rd Year" />
+                  <Picker.Item label="4th Year" value="4th Year" />
+                </Picker>
+              </View>
             </View>
 
-            <View style={styles.inputField}>
+            {/* <View style={styles.inputField}>
               <Image
                 source={require("../../assets/icons/calendar.png")}
                 style={styles.inputFieldIcon}
@@ -361,9 +383,20 @@ const EditProfile = () => {
                 autoCorrect={false}
                 placeholderTextColor={COLORS.darkGray}
               />
+            </View> */}
+            <View style={styles.pickerInputContainer}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={semester}
+                  onValueChange={(itemValue) => setSemester(itemValue)}
+                >
+                  <Picker.Item label="1st Semester" value="1st Semester" />
+                  <Picker.Item label="2nd Semester" value="2nd Semester" />
+                </Picker>
+              </View>
             </View>
 
-            <View style={styles.inputField}>
+            {/* <View style={styles.inputField}>
               <Image
                 source={require("../../assets/icons/mortarboard.png")}
                 style={styles.inputFieldIcon}
@@ -376,6 +409,36 @@ const EditProfile = () => {
                 autoCorrect={false}
                 placeholderTextColor={COLORS.darkGray}
               />
+            </View> */}
+            <View style={styles.pickerInputContainer}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={faculty}
+                  onValueChange={(itemValue) => setFaculty(itemValue)}
+                >
+                  <Picker.Item
+                    label="Faculty of Computing"
+                    value="Faculty of Computing"
+                  />
+                  <Picker.Item
+                    label="Faculty of Engineering"
+                    value="Faculty of Engineering"
+                  />
+                  <Picker.Item
+                    label="Faculty of Business"
+                    value="Faculty of Business"
+                  />
+                  <Picker.Item
+                    label="Faculty of Humanities & Sciences"
+                    value="Faculty of Humanities & Sciences"
+                  />
+                  <Picker.Item label="Faculty of Law" value="Faculty of Law" />
+                  <Picker.Item
+                    label="Faculty of Architecture"
+                    value="Faculty of Architecture"
+                  />
+                </Picker>
+              </View>
             </View>
 
             <View style={styles.inputField}>
@@ -418,7 +481,6 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: "contain",
     marginBottom: 20,
-    borderRadius: 50,
   },
   container: {
     flex: 1,
@@ -519,5 +581,15 @@ const styles = StyleSheet.create({
     flex: 1,
     color: COLORS.darkGray,
     padding: 10,
+  },
+  pickerInputContainer: {
+    flex: 6,
+  },
+  pickerContainer: {
+    //borderColor: COLORS.gray,
+    backgroundColor: COLORS.white,
+    //borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
   },
 });

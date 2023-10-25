@@ -32,6 +32,11 @@ const RequestSession = ({ route }) => {
 
   const { userData, setUserData } = useContext(UserContext);
 
+  // Define state variables to track field validation
+  const [isDateValid, setIsDateValid] = useState(true);
+  const [isTimeSlotValid, setIsTimeSlotValid] = useState(true);
+  const [isReasonValid, setIsReasonValid] = useState(true);
+
   const handleDateChange = (event, selectedDate) => {
     if (selectedDate) {
       setDate(selectedDate);
@@ -66,6 +71,28 @@ const RequestSession = ({ route }) => {
   };
 
   const handleFormSubmit = async () => {
+    // Add field validation logic
+    if (!date) {
+      setIsDateValid(false);
+    } else {
+      setIsDateValid(true);
+    }
+    if (!timeslot) {
+      setIsTimeSlotValid(false);
+    } else {
+      setIsTimeSlotValid(true);
+    }
+    if (!reason) {
+      setIsReasonValid(false);
+    } else {
+      setIsReasonValid(true);
+    }
+
+    // Check if all required fields are valid
+    if (!date || !timeslot || !reason) {
+      return; // Stop the submission if any required field is empty
+    }
+
     const doc = await addDoc(collection(FIRESTORE_DB, "sessions"), {
       classId: classDetails.id,
       tutorId: classDetails.userId,
@@ -88,6 +115,8 @@ const RequestSession = ({ route }) => {
     });
 
     alert("Session requested");
+    setDate();
+    setReason("");
   };
 
   return (
@@ -110,6 +139,7 @@ const RequestSession = ({ route }) => {
               <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
             </View>
           </View>
+          <View style={styles.ruler} />
           <Text style={styles.className}>{classDetails.classTitle}</Text>
           <View style={styles.priceContainer}>
             <Text style={styles.price}>
@@ -117,7 +147,9 @@ const RequestSession = ({ route }) => {
             </Text>
           </View>
           <View style={styles.formContainer}>
-            <Text>Date</Text>
+            <Text>
+              Date{!isDateValid && <Text style={styles.error}>*</Text>}
+            </Text>
             <View style={styles.dateInputField}>
               <TextInput
                 style={styles.dateInput}
@@ -146,7 +178,10 @@ const RequestSession = ({ route }) => {
             </View>
             {date && (
               <>
-                <Text>Timeslot</Text>
+                <Text>
+                  Timeslot
+                  {!isTimeSlotValid && <Text style={styles.error}>*</Text>}
+                </Text>
                 <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={timeslot}
@@ -164,7 +199,9 @@ const RequestSession = ({ route }) => {
                 </View>
               </>
             )}
-            <Text>Reason</Text>
+            <Text>
+              Reason{!isReasonValid && <Text style={styles.error}>*</Text>}
+            </Text>
             <TextInput
               value={reason}
               onChangeText={(text) => setReason(text)}
@@ -267,7 +304,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   className: {
-    marginTop: 30,
     fontWeight: "600",
     fontSize: 24,
   },
@@ -378,6 +414,16 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "500",
+  },
+  ruler: {
+    height: 1,
+    backgroundColor: COLORS.lightGray,
+    marginTop: 30,
+    marginBottom: 20,
+    opacity: 0.3,
+  },
+  error: {
+    color: "red",
   },
 });
 

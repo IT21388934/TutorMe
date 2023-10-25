@@ -46,10 +46,20 @@ const TutorHome = () => {
 
             <SafeAreaView style={styles.container}>
               <View style={styles.bottomButtonContainer}>
-                <Text style={styles.buttonText1}>* 4.5 5 15</Text>
-                <Text style={styles.buttonText2}>
-                  Tutor Rating No of Classes Completed Sessions
-                </Text>
+                <View style={styles.bottomButtonContainerRate}>
+                  <Text style={styles.buttonText1}>* 4.5</Text>
+                  <Text style={styles.buttonText2}>Tutor Rating </Text>
+                </View>
+
+                <View style={styles.bottomButtonContainerRate}>
+                  <Text style={styles.buttonText1}>5</Text>
+                  <Text style={styles.buttonText2}>No of Classes </Text>
+                </View>
+
+                <View style={styles.bottomButtonContainerRate}>
+                  <Text style={styles.buttonText1}>15</Text>
+                  <Text style={styles.buttonText2}>Completed Sessions</Text>
+                </View>
               </View>
             </SafeAreaView>
 
@@ -153,14 +163,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
+    flexDirection: "row",
+    paddingRight: 11,
   },
   buttonText1: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
     //textAlign: 'left',
-    marginBottom: 8,
-    marginRight: 60,
+    paddingBottom: 8,
   },
   buttonText2: {
     color: "white",
@@ -334,5 +345,11 @@ const styles = StyleSheet.create({
   },
   bottomButtonContainerTop1: {
     marginTop: 30,
+  },
+  bottomButtonContainerRate: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    paddingLeft: 5,
   },
 });

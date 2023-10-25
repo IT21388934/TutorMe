@@ -12,6 +12,7 @@ import { TutorFragment } from "../../layouts/TutorFragment";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
+import { COLORS } from "../../constants/theme";
 
 const TutorProfile = ({ navigation }) => {
   const { userData, setUserData } = useContext(UserContext);
@@ -20,22 +21,23 @@ const TutorProfile = ({ navigation }) => {
     <TutorFragment activeLink="profile">
       <SafeAreaView style={styles.container}>
         <ScrollView>
-          <View style={styles.rowContainer}>
+          <View style={styles.tutorInfo}>
             <Image
               source={
                 userData.photoURL === null
                   ? require("../../assets/images/profile.png")
                   : { uri: userData.photoURL }
               }
-              style={styles.imageContainer}
+              style={styles.tutorImage}
             />
-
-            <View style={styles.profileContainer}>
-              <Text style={styles.name}>
+            <View style={styles.tutorDetails}>
+              <Text style={styles.tutorName}>
                 {userData.firstName} {userData.lastName}
               </Text>
-              <Text style={styles.course}>Faculty of Computing</Text>
-              <Text style={styles.semester}>3rd Year 2nd Sem</Text>
+              <Text style={styles.tutorFaculty}>{userData.faculty}</Text>
+              <Text style={styles.tutorYear}>
+                {userData.academicYear} {userData.semester}
+              </Text>
             </View>
           </View>
 
@@ -81,7 +83,7 @@ const TutorProfile = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("Calendar")}
+              onPress={() => navigation.navigate("calendar")}
             >
               <View style={styles.box}>
                 <Image
@@ -162,20 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 10,
   },
-  profileContainer: {
-    flex: 1,
-    marginLeft: 30,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  course: {
-    fontSize: 15,
-  },
-  semester: {
-    fontSize: 10,
-  },
   buttonsContainer: {
     marginTop: 20,
     paddingHorizontal: 20,
@@ -205,5 +193,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
+  },
+  tutorInfo: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    padding: 30,
+    marginTop: 20,
+  },
+  tutorImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  tutorDetails: {
+    alignItems: "flex-end",
+  },
+  tutorName: {
+    textAlign: "right",
+    fontSize: 23,
+    fontWeight: "400",
+    color: COLORS.darkGray,
+  },
+  tutorFaculty: {
+    fontSize: 16,
+    marginVertical: 4,
+    color: COLORS.darkGray,
+  },
+  tutorYear: {
+    fontSize: 14,
+    color: COLORS.darkGray,
   },
 });

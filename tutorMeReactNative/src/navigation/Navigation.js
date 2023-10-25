@@ -23,6 +23,7 @@ import RequestSession from "../screens/StudentScreens/RequestSession";
 import MySessions from "../screens/StudentScreens/MySessions";
 import SessionDetails from "../screens/StudentScreens/SessionDetails";
 import EditSession from "../screens/StudentScreens/EditSession";
+import ClassDetailsView from "../screens/StudentScreens/ClassDetailsView";
 
 //tutor
 import TutorHome from "../screens/TutorScreens/TutorHome";
@@ -99,6 +100,7 @@ function StudentInside() {
     >
       <Stack.Screen name="main" component={StudentTabs} />
       {/* other student screeens which doesn't contain bottom navigation bar */}
+      <Stack.Screen name="classDetails" component={ClassDetailsView} />
       <Stack.Screen name="requestSession" component={RequestSession} />
       <Stack.Screen name="mySessions" component={MySessions} />
       <Stack.Screen name="sessionDetails" component={SessionDetails} />
