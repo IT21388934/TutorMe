@@ -11,6 +11,7 @@ import images from "../../constants/images";
 import React, { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { COLORS } from "../../constants/theme";
+
 import {
   collection,
   doc,
@@ -38,7 +39,7 @@ const CompletedClasses = ({ navigation }) => {
   useEffect(() => {
     const currentUserID = FIREBASE_AUTH.currentUser.uid;
 
-    console.log(currentUserID);
+    // console.log(currentUserID);
 
     // Update the query to filter by status
     const sessionsQuery = query(
