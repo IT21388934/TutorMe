@@ -41,9 +41,8 @@ const TutorProfile = ({ navigation }) => {
 
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
-              style={
-                styles.button
-              } /*onPress={() => navigation.navigate("EditProfile")}*/
+              style={styles.button}
+              onPress={() => navigation.navigate("editProfile")}
             >
               <View style={styles.box}>
                 <Image

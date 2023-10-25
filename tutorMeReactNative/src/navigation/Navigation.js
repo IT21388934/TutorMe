@@ -27,7 +27,7 @@ import EditSession from "../screens/StudentScreens/EditSession";
 //tutor
 import TutorHome from "../screens/TutorScreens/TutorHome";
 import MyClasses from "../screens/TutorScreens/MyClasses";
-import Calendar from "../screens/TutorScreens/Calendar";
+import MyCalendar from "../screens/TutorScreens/MyCalendar";
 import TutorProfile from "../screens/TutorScreens/TutorProfile";
 import NewRequests from "../screens/TutorScreens/NewRequests";
 import SingleNewRequest from "../screens/TutorScreens/SingleNewRequest";
@@ -38,6 +38,9 @@ import TutorSessions from "../screens/TutorScreens/TutorSessions";
 import BookedClasses from "../screens/TutorScreens/BookedClasses";
 import SingleBooked from "../screens/TutorScreens/SingleBooked";
 import CompletedClasses from "../screens/TutorScreens/CompletedClasses";
+import EditProfile from "../screens/TutorScreens/EditProfile";
+import ForgetPassword from "../screens/ForgetPassword";
+import IncompleteHome from "../screens/TutorScreens/IncompleteHome";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,7 +50,7 @@ function TutorTabs() {
     <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
       <Tab.Screen name="home" component={TutorHome} />
       <Tab.Screen name="myClasses" component={MyClasses} />
-      <Tab.Screen name="calendar" component={Calendar} />
+      <Tab.Screen name="calendar" component={MyCalendar} />
       <Tab.Screen name="profile" component={TutorProfile} />
       <Tab.Screen name="newRequests" component={NewRequests} />
       <Tab.Screen name="singleNewRequest" component={SingleNewRequest} />
@@ -69,6 +72,7 @@ function TutorInside() {
       initialRouteName="main"
     >
       <Stack.Screen name="main" component={TutorTabs} />
+      <Stack.Screen name="editProfile" component={EditProfile} />
       {/* other tutor screeens which doesn't contain bottom navigation bar */}
     </Stack.Navigator>
   );
@@ -111,6 +115,7 @@ function CommonTabs() {
       <Tab.Screen name="signUpOptions" component={SignUpOptions} />
       <Tab.Screen name="studentSignUp" component={StudentSignUp} />
       <Tab.Screen name="tutorSignUp" component={TutorSignUp} />
+      <Tab.Screen name="forgotPassword" component={ForgetPassword} />
     </Tab.Navigator>
   );
 }
