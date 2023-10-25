@@ -33,7 +33,7 @@ const statuses = [
   // },
 ];
 
-const MySessions = () => {
+const TutorSessions = () => {
   const [sessions, setSessions] = useState();
 
   const [statusCounts, setStatusCounts] = useState({});
@@ -146,7 +146,7 @@ const MySessions = () => {
   );
 };
 
-export default MySessions;
+export default TutorSessions;
 
 const styles = StyleSheet.create({
   container: {
