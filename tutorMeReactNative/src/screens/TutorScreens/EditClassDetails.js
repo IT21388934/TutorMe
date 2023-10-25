@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -20,8 +21,14 @@ import TimeSlots from "../../components/TimeSlots";
 import SessionSlot from "../../components/SessionSlot";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
+import images from "../../constants/images";
 
 import {
   ALERT_TYPE,
@@ -30,16 +37,19 @@ import {
   Toast,
 } from "react-native-alert-notification";
 
-export default function AddClass({ navigation }) {
+export default function EditClassDetails({ navigation, route }) {
   const { userData, setUserData } = useContext(UserContext);
   const tutorFirstName = userData.firstName;
   const tutorLastName = userData.lastName;
   const photoURL = userData.photoURL;
-  // console.log("photoURL", photoURL);
   const profilePicture = photoURL
     ? photoURL
     : "https://firebasestorage.googleapis.com/v0/b/tutorme-ef18e.appspot.com/o/profileImage%2F5lNgerv61XQNZxgMBn8Xoo45wRu2?alt=media&token=7a2adaac-9d43-47f2-a52b-3026663f8e47";
-  // console.log("profilePicture", profilePicture);
+  const userId = FIREBASE_AUTH.currentUser.uid;
+
+  const { item } = route.params; // Extract 'item' from route.params
+  const id = item.id;
+  console.log("item", item);
   const currentDate = new Date();
 
   const categories = [
@@ -54,7 +64,7 @@ export default function AddClass({ navigation }) {
     "Maths",
     "Nursing",
   ];
-  const [categorySearch, setCategorySearch] = useState("");
+  const [categorySearch, setCategorySearch] = useState(item.category);
   const [filteredCategories, setFilteredCategories] = useState(categories);
 
   const [tag, setTag] = useState("");
@@ -66,11 +76,20 @@ export default function AddClass({ navigation }) {
   const [classDescription, setClassDescription] = useState("");
   const [price, setPrice] = useState("");
   const [duration, setDuration] = useState("");
+  const [addedAt, setAddedAt] = useState("");
+
+  useEffect(() => {
+    setTags(item.tags);
+    setTimeSlots(item.timeSlots);
+    setClassTitle(item.classTitle);
+    setClassDescription(item.classDescription);
+    setCategorySearch(item.categorySearch);
+    setPrice(item.price);
+    setDuration(item.duration);
+    setAddedAt(item.addedAt);
+  }, [item]);
 
   const handleFormSubmit = async () => {
-    console.log("Form Submitted");
-    console.log(timeSlots);
-
     if (classTitle === "") {
       Toast.show({
         type: ALERT_TYPE.DANGER,
@@ -115,48 +134,50 @@ export default function AddClass({ navigation }) {
         textBody: "At least one time slot is required",
       });
     } else {
-      const userId = FIREBASE_AUTH.currentUser.uid;
-      const data = {
-        userId,
-        tutorFirstName,
-        tutorLastName,
-        profilePicture,
-        classTitle,
-        classDescription,
-        categorySearch,
-        tags,
-        price,
-        duration,
-        timeSlots,
-        addedAt: currentDate,
-      };
       try {
-        const docRef = await addDoc(collection(FIRESTORE_DB, "classes"), data);
-        console.log("Document written with ID: ", docRef.id);
+        // Create an object with the updated class data
+        const updatedClassData = {
+          userId,
+          tutorFirstName,
+          tutorLastName,
+          profilePicture,
+          classTitle,
+          classDescription,
+          categorySearch,
+          tags,
+          price,
+          duration,
+          timeSlots,
+          addedAt,
+          updatedAt: currentDate, // Include a timestamp for when it was updated
+        };
 
-        // Optionally, you can clear the form inputs here
+        // Update the class document in Firestore using updateDoc
+        const classRef = doc(FIRESTORE_DB, "classes", id); // Adjust the path to your Firestore collection
+        await updateDoc(classRef, updatedClassData);
+
         setClassDescription("");
         setClassTitle("");
-        // setCategorySearch("");
+        setCategorySearch("");
         setTags([]);
         setPrice("");
         setDuration("");
         setTimeSlots([]);
+        setAddedAt("");
+        // setUpdatedAt("");
 
         Toast.show({
           type: ALERT_TYPE.SUCCESS,
           title: "Success",
-          textBody: "Class added successfully",
+          textBody: "Class Details edited successfully !",
         });
+
+        navigation.navigate("myClasses");
+        // Navigate back to the previous screen
       } catch (error) {
-        console.error("Error adding document: ", error);
-        Toast.show({
-          type: ALERT_TYPE.DANGER,
-          title: "Error in submitting form",
-          textBody: "An error occurred while adding the class",
-        });
+        // Handle errors, e.g., show an error message
+        Alert.alert("Error updating class", error.message);
       }
-      navigation.navigate("myClasses");
     }
   };
 
@@ -170,7 +191,10 @@ export default function AddClass({ navigation }) {
       <>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Add a new Class</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
+              <Image source={images.backButton} style={styles.backButton} />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>Edit Class Details</Text>
           </View>
           <ScrollView style={styles.scrollerContainer}>
             <View style={styles.formContainer}>
@@ -311,8 +335,16 @@ const styles = StyleSheet.create({
   headerContainer: {
     padding: 18,
     backgroundColor: COLORS.green,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  backButton: {
+    width: 24,
+    height: 24,
   },
   headerText: {
+    flex: 1,
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 20,

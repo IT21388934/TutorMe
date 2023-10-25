@@ -2,9 +2,12 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { COLORS } from "../constants/theme";
 
-export default function WildClassCard({ item }) {
+export default function WildClassCard({ item, navigation }) {
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("singleNewRequest", { item: item })}
+    >
       {/* <Text>Card</Text> */}
       <Text style={styles.cardTitle} numberOfLines={2}>
         {item.className}

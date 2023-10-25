@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { COLORS } from "../../constants/theme";
+import images from "../../constants/images";
 import globalStyles from "../../global/globalStyles";
 
 import BottomNav from "../../components/TutorBottomNav";
@@ -18,49 +19,45 @@ import SessionSlot from "../../components/SessionSlot";
 
 import { editIcon, trash } from "../../constants/images";
 
-export default function ClassDetails() {
+import UserContext from "../../contexts/UserContext";
+
+export default function ClassDetails({ route, navigation }) {
+  const { item } = route.params; // Extract 'item' from route.params
+  // console.log("id", item.id);
   const activeLink = "MyClasses";
 
-  const [tags, setTags] = useState([
-    "OOP",
-    "C",
-    "Computing",
-    "Programming",
-    "1st year",
-    "2nd sem",
-    "Object Oriented Programming",
-  ]);
+  const { userData, setUserData } = useContext(UserContext);
+  const [data, setData] = useState("");
 
-  const [sessionSlot, setSessionSlot] = useState([
-    {
-      day: "Sunday",
-      startTime: "12.30",
-      endTime: "14.30",
-    },
-    {
-      day: "Monday",
-      startTime: "11.30",
-      endTime: "13.30",
-    },
-    {
-      day: "Tuesday",
-      startTime: "8.30",
-      endTime: "10.30",
-    },
-  ]);
+  const [tags, setTags] = useState([]);
+  const [sessionSlot, setSessionSlot] = useState([]);
+
+  // Use useEffect to listen for changes in route.params and update the state
+  useEffect(() => {
+    setData(item);
+    // console.log("tags", data.tags);
+    setTags(item.tags);
+    setSessionSlot(item.timeSlots);
+  }, [item]);
 
   return (
     <>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
+          <Image source={images.backButton} style={styles.backButton} />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Booked Class</Text>
+      </View>
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          {/* Your header content goes here */}
-        </View>
-
         <ScrollView>
           <View style={styles.rowContainer}>
             <View>
               <Image
-                source={require("../../assets/images/tutorProfileImage.png")}
+                source={
+                  userData.photoURL === null
+                    ? require("../../assets/images/profile.png")
+                    : { uri: userData.photoURL }
+                }
                 style={{
                   width: 64,
                   height: 64,
@@ -70,19 +67,19 @@ export default function ClassDetails() {
               ></Image>
             </View>
             <View style={globalStyles.rightAline}>
-              <Text style={globalStyles.boldF24mb2}>Suresh Wijesekara</Text>
+              <Text style={globalStyles.boldF24mb2}>
+                {userData.firstName} {userData.lastName}
+              </Text>
               <Text style={globalStyles.boldF16mb2}>Faculty of Computing</Text>
               <Text style={globalStyles.regularF14}>3rd year 2nd sem</Text>
             </View>
           </View>
           <View style={styles.container}>
             <Text style={globalStyles.boldF24mb8}>
-              ObJect Oriented Programming
+              {data.classTitle ? data.classTitle : "Class Title"}
             </Text>
             <Text style={globalStyles.regularF16}>
-              "Join a 2-hour class to learn about Object-Oriented Programming
-              with C language. Explore key concepts and practical use in a
-              simple way."
+              "{data.classDescription ? data.classDescription : "Description"}"
             </Text>
           </View>
           <View style={styles.tagsContainer}>
@@ -91,7 +88,9 @@ export default function ClassDetails() {
             ))}
           </View>
           <View style={styles.priceContainer}>
-            <Text style={styles.priceWhiteBg}>Rs: 2000.00 per session</Text>
+            <Text style={styles.priceWhiteBg}>
+              Rs: {data.price ? data.price : "0"}.00 per session
+            </Text>
           </View>
           <View style={styles.container}>
             <Text style={globalStyles.boldF16mb8}>Session Times</Text>
@@ -104,9 +103,14 @@ export default function ClassDetails() {
           <View style={styles.deleteBtn}>
             <Image source={trash} style={{ width: 24, height: 24 }} />
           </View>
-          <View style={styles.editBtn}>
+          <TouchableOpacity
+            style={styles.editBtn}
+            onPress={() =>
+              navigation.navigate("editClassDetails", { item: item })
+            }
+          >
             <Image source={editIcon} style={{ width: 24, height: 24 }} />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       <BottomNav activeLink={activeLink} />
@@ -121,7 +125,22 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   headerContainer: {
-    padding: 16,
+    padding: 18,
+    backgroundColor: COLORS.green,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  backButton: {
+    width: 24,
+    height: 24,
+  },
+  headerText: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: COLORS.white,
   },
 
   gridContainer: {

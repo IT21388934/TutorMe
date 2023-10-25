@@ -2,12 +2,21 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { COLORS } from "../constants/theme";
 
-export default function Card({ item }) {
+export default function Card({ item, navigation, id }) {
+  // const handleCardPress = () => {
+  //   navigation.navigate("classDetails");
+  // };
+
+  // console.log("id", id);
+
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("classDetails", { item: item })}
+    >
       {/* <Text>Card</Text> */}
       <Text style={styles.cardTitle} numberOfLines={2}>
-        {item.className}
+        {item.classTitle}
       </Text>
       {item.classDescription != " " ? (
         <Text style={styles.cardDescription} numberOfLines={2}>
@@ -19,7 +28,7 @@ export default function Card({ item }) {
       ) : null}
       <View style={styles.cardBottom}>
         <Text style={styles.duration} numberOfLines={1}>
-          {item.duration}
+          {item.duration} hrs
         </Text>
         <Text style={styles.price} numberOfLines={1}>
           Rs: {item.price ? item.price : 0.0}
@@ -67,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   price: {
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: "#FDE8E8",
     padding: 4,
     fontWeight: "900",
     fontSize: 14,
