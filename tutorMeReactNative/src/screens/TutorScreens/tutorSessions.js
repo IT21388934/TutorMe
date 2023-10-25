@@ -1,12 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from "react-native";
-import images from "../../constants/images";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
 import { COLORS } from "../../constants/theme";
@@ -27,9 +19,21 @@ const statuses = [
     textColor: COLORS.notificationLightYellow,
     bgColor: COLORS.notificationDarkYellow,
   },
+  // {
+  //   status: "ready",
+  //   displayText: "Booked",
+  //   textColor: COLORS.notificationDarkGreen,
+  //   bgColor: COLORS.notificationLightGreen,
+  // },
+  // {
+  //   status: "completed",
+  //   displayText: "Completed",
+  //   textColor: COLORS.notificationDarkGreen,
+  //   bgColor: COLORS.notificationLightGreen,
+  // },
 ];
 
-const NewRequest = ({ navigation }) => {
+const MySessions = () => {
   const [sessions, setSessions] = useState();
 
   const [statusCounts, setStatusCounts] = useState({});
@@ -57,28 +61,21 @@ const NewRequest = ({ navigation }) => {
           });
         });
         setSessions(sessions);
-
-        setStatusCounts(sessions.length);
         console.log(sessions);
-        console.log(statusCounts);
       },
     });
-
     return () => subscriber();
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.session}
-      onPress={() => navigation.navigate("singleNewRequest", { item: item })}
-    >
+    <View style={styles.session}>
       <View style={styles.sessionLeft}>
         <Text style={styles.class}>
           {item.classTitle.length > 30
             ? item.classTitle.slice(0, 28) + "..."
             : item.classTitle}
         </Text>
-        <Text style={styles.tutor}>{item.studentName}</Text>
+        <Text style={styles.tutor}>{item.tutorName}</Text>
         <Text style={styles.time}>
           {item.date} | {item.timeslot}
         </Text>
@@ -104,28 +101,37 @@ const NewRequest = ({ navigation }) => {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
-    <>
-      <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
-          <Image source={images.backButton} style={styles.backButton} />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>New Requests</Text>
-      </View>
+    <StudentLayout name="My sessions">
       <View style={styles.container}>
         <View style={styles.notificationsContainer}>
-          <View style={styles.notification}>
-            {statusCounts > 0 ? (
-              <Text style={styles.notificationText}>
-                {statusCounts} New request{statusCounts > 1 ? "s" : ""}
-              </Text>
-            ) : (
-              <Text>No new requests</Text>
-            )}
-          </View>
+          {statuses.map((statusInfo) => {
+            const count = statusCounts[statusInfo.status] || 0;
+            if (count >= 1) {
+              return (
+                <View
+                  key={statusInfo.status}
+                  style={{
+                    ...styles.notification,
+                    backgroundColor: statusInfo.bgColor,
+                  }}
+                >
+                  <Text
+                    style={{
+                      ...styles.notificationText,
+                      color: statusInfo.textColor,
+                    }}
+                  >
+                    {count} {statusInfo.displayText}
+                  </Text>
+                </View>
+              );
+            }
+            return null;
+          })}
         </View>
 
         <View style={styles.sessionsContainer}>
@@ -136,11 +142,11 @@ const NewRequest = ({ navigation }) => {
           />
         </View>
       </View>
-    </>
+    </StudentLayout>
   );
 };
 
-export default NewRequest;
+export default MySessions;
 
 const styles = StyleSheet.create({
   container: {
@@ -159,11 +165,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginRight: 14,
     width: 120,
-    backgroundColor: COLORS.notificationDarkYellow,
   },
-  notificationText: {
-    color: COLORS.notificationLightYellow,
-  },
+  notificationText: {},
   sessionsContainer: {
     paddingVertical: 15,
   },
@@ -174,7 +177,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 10,
     padding: 15,
-    marginBottom: 15,
   },
   class: {
     fontWeight: "600",
@@ -195,22 +197,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   statusText: {},
-  headerContainer: {
-    padding: 18,
-    backgroundColor: COLORS.green,
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  backButton: {
-    width: 24,
-    height: 24,
-  },
-  headerText: {
-    flex: 1,
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 20,
-    color: COLORS.white,
-  },
 });

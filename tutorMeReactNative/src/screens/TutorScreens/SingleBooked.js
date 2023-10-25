@@ -12,7 +12,7 @@ import { COLORS } from "../../constants/theme";
 import images from "../../constants/images";
 import BottomNav from "../../components/TutorBottomNav";
 
-import DeclineReasonModal from "../../components/DeclineReasonModal ";
+import SendInfoModal from "../../components/SendInfoModal";
 
 import { doc, updateDoc } from "firebase/firestore";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
@@ -23,12 +23,12 @@ import {
   Toast,
 } from "react-native-alert-notification";
 
-export default SingleNewRequest = ({ route, navigation }) => {
+export default SingleBooked = ({ route, navigation }) => {
   const activeLink = "NewRequest";
 
   const { item } = route.params;
   const [data, setData] = useState(item);
-  // console.log("id", item.id);
+  // console.log("item", item);
   const id = item.id;
 
   useEffect(() => {
@@ -44,71 +44,41 @@ export default SingleNewRequest = ({ route, navigation }) => {
     setDeclineReason(reason);
     console.log("Decline reason: ", reason);
     if (reason) {
-      declineSession(id, reason);
+      sendInfo(id, reason);
       setModalVisible(false);
     } else {
       Toast.show({
-        type: ALERT_TYPE.DANGER,
-        title: "Error in declining request",
-        textBody: "Please enter a reason for declining the request.",
+        type: ALERT_TYPE.WARNING,
+        title: "Error in sending info",
+        textBody: "Please enter info to send.",
       });
-      console.log("Please enter a reason for declining the request.");
+      console.log("Please enter info to send.");
     }
 
     // Close the modal
   };
 
-  // Function to accept a session
-  const acceptSession = async (sessionId) => {
+  const sendInfo = async (sessionId, reason) => {
     const sessionRef = doc(FIRESTORE_DB, "sessions", sessionId);
 
     try {
       await updateDoc(sessionRef, {
-        status: "accepted",
-        acceptedAt: new Date(), // Add the accepted timestamp or other additional fields
-      });
-      console.log("Session accepted!");
-      Toast.show({
-        type: ALERT_TYPE.SUCCESS,
-        title: "Success",
-        textBody: "Request accepted!",
-      });
-
-      navigation.navigate("myClasses");
-    } catch (error) {
-      console.error("Error accepting session: ", error);
-      Toast.show({
-        type: ALERT_TYPE.DANGER,
-        title: "Error in accepting request",
-        textBody:
-          "An error occurred while accepting the request. Please try again later.",
-      });
-    }
-  };
-
-  // Function to decline a session
-  const declineSession = async (sessionId, reason) => {
-    const sessionRef = doc(FIRESTORE_DB, "sessions", sessionId);
-
-    try {
-      await updateDoc(sessionRef, {
-        status: "declined",
-        declineReason: reason, // Add the decline reason or other additional fields
+        // status: "declined",
+        info: reason, // Add the decline reason or other additional fields
       });
       console.log("Request declined!");
       Toast.show({
         type: ALERT_TYPE.SUCCESS,
         title: "Success",
-        textBody: "Request declined!",
+        textBody: "Info sent!",
       });
       navigation.navigate("myClasses");
     } catch (error) {
-      console.error("Error declining request: ", error);
+      console.error("Error send info: ", error);
       Toast.show({
         type: ALERT_TYPE.DANGER,
-        title: "Error in declining request",
-        textBody:
-          "An error occurred while declining the request. Please try again later.",
+        title: "Error in sending info",
+        textBody: "An error occurred while sending info ",
       });
     }
   };
@@ -120,7 +90,7 @@ export default SingleNewRequest = ({ route, navigation }) => {
           <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
             <Image source={images.backButton} style={styles.backButton} />
           </TouchableOpacity>
-          <Text style={styles.headerText}>New Request</Text>
+          <Text style={styles.headerText}>Booked Class</Text>
         </View>
         <View style={styles.container}>
           <View style={styles.newRequestContainer}>
@@ -152,28 +122,42 @@ export default SingleNewRequest = ({ route, navigation }) => {
               <Text style={styles.content}>{data.numOfStudents}</Text>
             </View>
           </View>
-          <View style={styles.rowContainer}>
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => setModalVisible(true)}
-            >
-              <Text style={styles.btnText}>Decline</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.editBtn}
-              // onPress={() =>
-              //   navigation.navigate("editClassDetails", { item: item })
-              // }
-              onPress={() => {
-                acceptSession(id);
-                // You can add additional logic here as needed
-              }}
-            >
-              <Text style={styles.btnText}>Accept</Text>
-            </TouchableOpacity>
+          <View style={styles.btnContainer}>
+            {/* <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.btnText}>Decline</Text>
+          </TouchableOpacity> */}
+            {data.info ? (
+              <>
+                <View style={styles.detailInRow}>
+                  <Text style={styles.label}>Info:- </Text>
+                  <Text style={styles.content}>{data.info}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.sendInfo}
+                  // onPress={() =>
+                  //   navigation.navigate("editClassDetails", { item: item })
+                  // }
+                >
+                  <Text style={styles.btnText}>Info has been sent</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity
+                style={styles.sendInfo}
+                // onPress={() =>
+                //   navigation.navigate("editClassDetails", { item: item })
+                // }
+                onPress={() => setModalVisible(true)}
+              >
+                <Text style={styles.btnText}>Send Info</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-        <DeclineReasonModal
+        <SendInfoModal
           isVisible={isModalVisible}
           onClose={() => setModalVisible(false)}
           onDecline={handleDecline}
@@ -252,10 +236,9 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 8,
   },
-  rowContainer: {
+  btnContainer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+
     padding: 16,
   },
   deleteBtn: {
@@ -267,10 +250,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  editBtn: {
+  sendInfo: {
     backgroundColor: COLORS.blueButton,
     borderRadius: 10,
-    width: 100,
+    // width: 100,
     height: 40,
     // padding: 16,
     justifyContent: "center",

@@ -23,6 +23,15 @@ const COLORS = {
 
   tagsRed: "#FEA3A3", //tags
   tagsYellow: "#FDFF9A", //tagsy
+
+  notificationLightYellow: "#B18D00",
+  notificationDarkYellow: "#FCFEA3",
+  notificationLightGreen: "#50CC8B",
+  notificationDarkGreen: "#085E30",
+  notificationLightRed: "#FEA3A3",
+  notificationDarkRed: "#D30101",
+  notificationLightBlue: "#C0CDEE",
+  notificationDarkBlue: "#0A13EC",
 };
 
 const FONT = {
