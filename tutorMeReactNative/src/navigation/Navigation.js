@@ -62,6 +62,10 @@ function TutorTabs() {
 			<Tab.Screen name="bookedClasses" component={BookedClasses} />
 			<Tab.Screen name="singleBooked" component={SingleBooked} />
 			<Tab.Screen name="completedClasses" component={CompletedClasses} />
+			<Tab.Screen name="smList" component={StudyMaterialsList} />
+			<Tab.Screen name="smAdd" component={AddStudyMaterial} />
+			<Tab.Screen name="smEdit" component={EditStudyMaterial} />
+			<Tab.Screen name="smView" component={ViewStudyMaterial} />
 		</Tab.Navigator>
 	);
 }
