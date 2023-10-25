@@ -63,10 +63,10 @@ export default SingleBooked = ({ route, navigation }) => {
 
     try {
       await updateDoc(sessionRef, {
-        // status: "declined",
+        status: "ready",
         info: reason, // Add the decline reason or other additional fields
       });
-      console.log("Request declined!");
+      console.log("info sent");
       Toast.show({
         type: ALERT_TYPE.SUCCESS,
         title: "Success",

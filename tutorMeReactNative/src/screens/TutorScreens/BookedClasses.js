@@ -22,6 +22,12 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 
 const statuses = [
   {
+    status: "booked",
+    displayText: "New request",
+    textColor: COLORS.notificationDarkBlue,
+    bgColor: COLORS.notificationLightBlue,
+  },
+  {
     status: "ready",
     displayText: "New request",
     textColor: COLORS.notificationDarkBlue,
@@ -43,7 +49,7 @@ const BookedClasses = ({ navigation }) => {
     const sessionsQuery = query(
       collection(FIRESTORE_DB, "sessions"),
       where("tutorId", "==", currentUserID),
-      where("status", "==", "ready") // Filter by status
+      where("status", "in", ["booked", "ready"]) // Filter by status
       // orderBy("submittedAt", "desc")
     );
 
