@@ -23,6 +23,15 @@
     },
     "web": {
       "favicon": "src/assets/favicon.png"
-    }
+    },
+	"plugins": [
+		[
+			"expo-image-picker",
+			{
+				"photosPermission": "Allow TutorME to access your photo",
+				"cameraPermission": "Allow TutorME to access your camera"
+			}
+		]
+	]
   }
 }
