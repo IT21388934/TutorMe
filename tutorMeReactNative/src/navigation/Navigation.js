@@ -89,6 +89,7 @@ function StudentTabs() {
 			<Tab.Screen name="search" component={CategorySearch} />
 			<Tab.Screen name="studyMaterials" component={StudyMaterials} />
 			<Tab.Screen name="profile" component={StudentProfile} />
+			<Tab.Screen name="smView" component={SMDetails} />
 		</Tab.Navigator>
 	);
 }
