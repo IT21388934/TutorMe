@@ -6,6 +6,7 @@ import {
   View,
   Image,
 } from "react-native";
+
 import images from "../../constants/images";
 import React, { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
@@ -22,14 +23,14 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 
 const statuses = [
   {
-    status: "pending",
-    displayText: "New request",
-    textColor: COLORS.notificationLightYellow,
-    bgColor: COLORS.notificationDarkYellow,
+    status: "completed",
+    displayText: "Completed ",
+    textColor: COLORS.notificationLightGreen,
+    bgColor: COLORS.notificationLightGreen,
   },
 ];
 
-const NewRequest = ({ navigation }) => {
+const CompletedClasses = ({ navigation }) => {
   const [sessions, setSessions] = useState();
 
   const [statusCounts, setStatusCounts] = useState({});
@@ -43,7 +44,7 @@ const NewRequest = ({ navigation }) => {
     const sessionsQuery = query(
       collection(FIRESTORE_DB, "sessions"),
       where("tutorId", "==", currentUserID),
-      where("status", "==", "pending") // Filter by status
+      where("status", "==", "completed") // Filter by status
       // orderBy("submittedAt", "desc")
     );
 
@@ -70,7 +71,7 @@ const NewRequest = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.session}
-      onPress={() => navigation.navigate("singleNewRequest", { item: item })}
+      //   onPress={() => navigation.navigate("singleNewRequest", { item: item })}
     >
       <View style={styles.sessionLeft}>
         <Text style={styles.class}>
@@ -113,17 +114,17 @@ const NewRequest = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
           <Image source={images.backButton} style={styles.backButton} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>New Requests</Text>
+        <Text style={styles.headerText}>Booked Class</Text>
       </View>
       <View style={styles.container}>
         <View style={styles.notificationsContainer}>
           <View style={styles.notification}>
             {statusCounts > 0 ? (
               <Text style={styles.notificationText}>
-                {statusCounts} New request{statusCounts > 1 ? "s" : ""}
+                {statusCounts} Completed class{statusCounts > 1 ? "es" : ""}
               </Text>
             ) : (
-              <Text>No new requests</Text>
+              <Text>No Completed classes</Text>
             )}
           </View>
         </View>
@@ -140,7 +141,7 @@ const NewRequest = ({ navigation }) => {
   );
 };
 
-export default NewRequest;
+export default CompletedClasses;
 
 const styles = StyleSheet.create({
   container: {
@@ -158,11 +159,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 5,
     marginRight: 14,
-    width: 120,
-    backgroundColor: COLORS.notificationDarkYellow,
+    width: 200,
+    backgroundColor: COLORS.notificationLightGreen,
   },
   notificationText: {
-    color: COLORS.notificationLightYellow,
+    color: COLORS.notificationDarkGreen,
   },
   sessionsContainer: {
     paddingVertical: 15,

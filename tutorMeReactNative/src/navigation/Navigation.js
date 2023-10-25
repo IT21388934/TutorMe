@@ -31,6 +31,10 @@ import SingleNewRequest from "../screens/TutorScreens/SingleNewRequest";
 import ClassDetails from "../screens/TutorScreens/ClassDetails";
 import AddClass from "../screens/TutorScreens/AddClass";
 import EditClassDetails from "../screens/TutorScreens/EditClassDetails";
+import MySessions from "../screens/TutorScreens/tutorSessions";
+import BookedClasses from "../screens/TutorScreens/BookedClasses";
+import SingleBooked from "../screens/TutorScreens/SingleBooked";
+import CompletedClasses from "../screens/TutorScreens/CompletedClasses";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,6 +51,10 @@ function TutorTabs() {
       <Tab.Screen name="classDetails" component={ClassDetails} />
       <Tab.Screen name="addClass" component={AddClass} />
       <Tab.Screen name="editClassDetails" component={EditClassDetails} />
+      <Tab.Screen name="mySessions" component={MySessions} />
+      <Tab.Screen name="bookedClasses" component={BookedClasses} />
+      <Tab.Screen name="singleBooked" component={SingleBooked} />
+      <Tab.Screen name="completedClasses" component={CompletedClasses} />
     </Tab.Navigator>
   );
 }

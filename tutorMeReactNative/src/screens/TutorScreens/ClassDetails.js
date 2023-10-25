@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { COLORS } from "../../constants/theme";
+import images from "../../constants/images";
 import globalStyles from "../../global/globalStyles";
 
 import BottomNav from "../../components/TutorBottomNav";
@@ -26,25 +27,28 @@ export default function ClassDetails({ route, navigation }) {
   const activeLink = "MyClasses";
 
   const { userData, setUserData } = useContext(UserContext);
-  const [data, setData] = useState(item);
+  const [data, setData] = useState("");
 
-  const [tags, setTags] = useState(data.tags);
-  const [sessionSlot, setSessionSlot] = useState(data.timeSlots);
+  const [tags, setTags] = useState([]);
+  const [sessionSlot, setSessionSlot] = useState([]);
 
   // Use useEffect to listen for changes in route.params and update the state
   useEffect(() => {
     setData(item);
-    setTags(data.tags);
-    setSessionSlot(data.timeSlots);
+    // console.log("tags", data.tags);
+    setTags(item.tags);
+    setSessionSlot(item.timeSlots);
   }, [item]);
 
   return (
     <>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
+          <Image source={images.backButton} style={styles.backButton} />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>Booked Class</Text>
+      </View>
       <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          {/* Your header content goes here */}
-        </View>
-
         <ScrollView>
           <View style={styles.rowContainer}>
             <View>
@@ -121,7 +125,22 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   headerContainer: {
-    padding: 16,
+    padding: 18,
+    backgroundColor: COLORS.green,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  backButton: {
+    width: 24,
+    height: 24,
+  },
+  headerText: {
+    flex: 1,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    color: COLORS.white,
   },
 
   gridContainer: {

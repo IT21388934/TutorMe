@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   price: {
-    backgroundColor: COLORS.lightGray,
+    backgroundColor: "#FDE8E8",
     padding: 4,
     fontWeight: "900",
     fontSize: 14,

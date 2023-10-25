@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -27,6 +28,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
+import images from "../../constants/images";
 
 import {
   ALERT_TYPE,
@@ -47,7 +49,7 @@ export default function EditClassDetails({ navigation, route }) {
 
   const { item } = route.params; // Extract 'item' from route.params
   const id = item.id;
-  console.log("id", id);
+  console.log("item", item);
   const currentDate = new Date();
 
   const categories = [
@@ -66,17 +68,26 @@ export default function EditClassDetails({ navigation, route }) {
   const [filteredCategories, setFilteredCategories] = useState(categories);
 
   const [tag, setTag] = useState("");
-  const [tags, setTags] = useState(item.tags);
+  const [tags, setTags] = useState([]);
 
-  const [timeSlots, setTimeSlots] = useState(item.timeSlots);
+  const [timeSlots, setTimeSlots] = useState([]);
 
-  const [classTitle, setClassTitle] = useState(item.classTitle);
-  const [classDescription, setClassDescription] = useState(
-    item.classDescription
-  );
-  const [price, setPrice] = useState(item.price);
-  const [duration, setDuration] = useState(item.duration);
-  const [addedAt, setAddedAt] = useState(item.addedAt);
+  const [classTitle, setClassTitle] = useState("");
+  const [classDescription, setClassDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [duration, setDuration] = useState("");
+  const [addedAt, setAddedAt] = useState("");
+
+  useEffect(() => {
+    setTags(item.tags);
+    setTimeSlots(item.timeSlots);
+    setClassTitle(item.classTitle);
+    setClassDescription(item.classDescription);
+    setCategorySearch(item.categorySearch);
+    setPrice(item.price);
+    setDuration(item.duration);
+    setAddedAt(item.addedAt);
+  }, [item]);
 
   const handleFormSubmit = async () => {
     if (classTitle === "") {
@@ -145,9 +156,24 @@ export default function EditClassDetails({ navigation, route }) {
         const classRef = doc(FIRESTORE_DB, "classes", id); // Adjust the path to your Firestore collection
         await updateDoc(classRef, updatedClassData);
 
-        // Handle success, e.g., show a success message or navigate back
-        Alert.alert("Class updated successfully");
-        navigation.goBack(); // Navigate back to the previous screen
+        setClassDescription("");
+        setClassTitle("");
+        setCategorySearch("");
+        setTags([]);
+        setPrice("");
+        setDuration("");
+        setTimeSlots([]);
+        setAddedAt("");
+        // setUpdatedAt("");
+
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Success",
+          textBody: "Class Details edited successfully !",
+        });
+
+        navigation.navigate("myClasses");
+        // Navigate back to the previous screen
       } catch (error) {
         // Handle errors, e.g., show an error message
         Alert.alert("Error updating class", error.message);
@@ -165,7 +191,10 @@ export default function EditClassDetails({ navigation, route }) {
       <>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Add a new Class</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
+              <Image source={images.backButton} style={styles.backButton} />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>Edit Class Details</Text>
           </View>
           <ScrollView style={styles.scrollerContainer}>
             <View style={styles.formContainer}>
@@ -306,8 +335,16 @@ const styles = StyleSheet.create({
   headerContainer: {
     padding: 18,
     backgroundColor: COLORS.green,
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  backButton: {
+    width: 24,
+    height: 24,
   },
   headerText: {
+    flex: 1,
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 20,

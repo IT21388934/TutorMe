@@ -17,6 +17,13 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
+
 export default function MyClasses({ navigation }) {
   const userId = FIREBASE_AUTH.currentUser.uid;
   const [searchText, setSearchText] = useState("");
@@ -73,39 +80,45 @@ export default function MyClasses({ navigation }) {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>My Classes</Text>
+    <AlertNotificationRoot>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerText}>My Classes</Text>
+        </View>
+
+        <View style={styles.tagsContainer}>
+          <TouchableOpacity onPress={() => navigation.navigate("newRequests")}>
+            <Text style={styles.newClassTag}>New Requests</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("bookedClasses")}
+          >
+            <Text style={styles.bookedClassesTag}>Booked Class</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("completedClasses")}
+          >
+            <Text style={styles.completedClassTag}>Completed Class</Text>
+          </TouchableOpacity>
+        </View>
+
+        <SearchBar handleSearch={handleSearch} searchText={searchText} />
+
+        <FlatList
+          data={filteredData.length > 0 ? filteredData : data}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          contentContainerStyle={styles.gridContainer}
+          renderItem={({ item }) => (
+            <Card item={item} id={item.id} navigation={navigation} />
+          )}
+        />
+
+        <FloatingButton onPress={handleFloatingButton} />
+
+        <BottomNav activeLink={"myClasses"} />
       </View>
-
-      <View style={styles.tagsContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate("newRequests")}>
-          <Text style={styles.newClassTag}>New Requests</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.bookedClassesTag}>Booked Class</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.completedClassTag}>Completed Class</Text>
-        </TouchableOpacity>
-      </View>
-
-      <SearchBar handleSearch={handleSearch} searchText={searchText} />
-
-      <FlatList
-        data={filteredData.length > 0 ? filteredData : data}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.gridContainer}
-        renderItem={({ item }) => (
-          <Card item={item} id={item.id} navigation={navigation} />
-        )}
-      />
-
-      <FloatingButton onPress={handleFloatingButton} />
-
-      <BottomNav activeLink={"myClasses"} />
-    </View>
+    </AlertNotificationRoot>
   );
 }
 
@@ -134,24 +147,24 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   newClassTag: {
-    color: COLORS.primary,
+    color: COLORS.notificationLightYellow,
     fontWeight: "bold",
     padding: 8,
-    backgroundColor: COLORS.green,
+    backgroundColor: COLORS.notificationDarkYellow,
     borderRadius: 8,
   },
   bookedClassesTag: {
-    color: COLORS.darkRed,
+    color: COLORS.notificationDarkBlue,
     fontWeight: "bold",
     padding: 8,
-    backgroundColor: COLORS.tagsRed,
+    backgroundColor: COLORS.notificationLightBlue,
     borderRadius: 8,
   },
   completedClassTag: {
-    color: COLORS.darkYellow,
+    color: COLORS.notificationDarkGreen,
     fontWeight: "bold",
     padding: 8,
-    backgroundColor: COLORS.tagsYellow,
+    backgroundColor: COLORS.notificationLightGreen,
     borderRadius: 8,
   },
   availableClasses: {
