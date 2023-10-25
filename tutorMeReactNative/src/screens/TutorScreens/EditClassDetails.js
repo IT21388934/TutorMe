@@ -20,7 +20,12 @@ import TimeSlots from "../../components/TimeSlots";
 import SessionSlot from "../../components/SessionSlot";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  updateDoc,
+  doc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
 
 import {
@@ -30,16 +35,19 @@ import {
   Toast,
 } from "react-native-alert-notification";
 
-export default function AddClass({ navigation }) {
+export default function EditClassDetails({ navigation, route }) {
   const { userData, setUserData } = useContext(UserContext);
   const tutorFirstName = userData.firstName;
   const tutorLastName = userData.lastName;
   const photoURL = userData.photoURL;
-  // console.log("photoURL", photoURL);
   const profilePicture = photoURL
     ? photoURL
     : "https://firebasestorage.googleapis.com/v0/b/tutorme-ef18e.appspot.com/o/profileImage%2F5lNgerv61XQNZxgMBn8Xoo45wRu2?alt=media&token=7a2adaac-9d43-47f2-a52b-3026663f8e47";
-  // console.log("profilePicture", profilePicture);
+  const userId = FIREBASE_AUTH.currentUser.uid;
+
+  const { item } = route.params; // Extract 'item' from route.params
+  const id = item.id;
+  console.log("id", id);
   const currentDate = new Date();
 
   const categories = [
@@ -54,23 +62,23 @@ export default function AddClass({ navigation }) {
     "Maths",
     "Nursing",
   ];
-  const [categorySearch, setCategorySearch] = useState("");
+  const [categorySearch, setCategorySearch] = useState(item.category);
   const [filteredCategories, setFilteredCategories] = useState(categories);
 
   const [tag, setTag] = useState("");
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(item.tags);
 
-  const [timeSlots, setTimeSlots] = useState([]);
+  const [timeSlots, setTimeSlots] = useState(item.timeSlots);
 
-  const [classTitle, setClassTitle] = useState("");
-  const [classDescription, setClassDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [duration, setDuration] = useState("");
+  const [classTitle, setClassTitle] = useState(item.classTitle);
+  const [classDescription, setClassDescription] = useState(
+    item.classDescription
+  );
+  const [price, setPrice] = useState(item.price);
+  const [duration, setDuration] = useState(item.duration);
+  const [addedAt, setAddedAt] = useState(item.addedAt);
 
   const handleFormSubmit = async () => {
-    console.log("Form Submitted");
-    console.log(timeSlots);
-
     if (classTitle === "") {
       Toast.show({
         type: ALERT_TYPE.DANGER,
@@ -115,48 +123,35 @@ export default function AddClass({ navigation }) {
         textBody: "At least one time slot is required",
       });
     } else {
-      const userId = FIREBASE_AUTH.currentUser.uid;
-      const data = {
-        userId,
-        tutorFirstName,
-        tutorLastName,
-        profilePicture,
-        classTitle,
-        classDescription,
-        categorySearch,
-        tags,
-        price,
-        duration,
-        timeSlots,
-        addedAt: currentDate,
-      };
       try {
-        const docRef = await addDoc(collection(FIRESTORE_DB, "classes"), data);
-        console.log("Document written with ID: ", docRef.id);
+        // Create an object with the updated class data
+        const updatedClassData = {
+          userId,
+          tutorFirstName,
+          tutorLastName,
+          profilePicture,
+          classTitle,
+          classDescription,
+          categorySearch,
+          tags,
+          price,
+          duration,
+          timeSlots,
+          addedAt,
+          updatedAt: currentDate, // Include a timestamp for when it was updated
+        };
 
-        // Optionally, you can clear the form inputs here
-        setClassDescription("");
-        setClassTitle("");
-        // setCategorySearch("");
-        setTags([]);
-        setPrice("");
-        setDuration("");
-        setTimeSlots([]);
+        // Update the class document in Firestore using updateDoc
+        const classRef = doc(FIRESTORE_DB, "classes", id); // Adjust the path to your Firestore collection
+        await updateDoc(classRef, updatedClassData);
 
-        Toast.show({
-          type: ALERT_TYPE.SUCCESS,
-          title: "Success",
-          textBody: "Class added successfully",
-        });
+        // Handle success, e.g., show a success message or navigate back
+        Alert.alert("Class updated successfully");
+        navigation.goBack(); // Navigate back to the previous screen
       } catch (error) {
-        console.error("Error adding document: ", error);
-        Toast.show({
-          type: ALERT_TYPE.DANGER,
-          title: "Error in submitting form",
-          textBody: "An error occurred while adding the class",
-        });
+        // Handle errors, e.g., show an error message
+        Alert.alert("Error updating class", error.message);
       }
-      navigation.navigate("myClasses");
     }
   };
 

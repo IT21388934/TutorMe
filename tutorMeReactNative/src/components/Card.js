@@ -2,9 +2,18 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { COLORS } from "../constants/theme";
 
-export default function Card({ item }) {
+export default function Card({ item, navigation, id }) {
+  // const handleCardPress = () => {
+  //   navigation.navigate("classDetails");
+  // };
+
+  // console.log("id", id);
+
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => navigation.navigate("classDetails", { item: item })}
+    >
       {/* <Text>Card</Text> */}
       <Text style={styles.cardTitle} numberOfLines={2}>
         {item.classTitle}

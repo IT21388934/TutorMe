@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { COLORS } from "../../constants/theme";
+import { EvilIcons } from "@expo/vector-icons";
 
 import Card from "../../components/Card";
 import BottomNav from "../../components/TutorBottomNav";
@@ -15,6 +15,7 @@ import SearchBar from "../../components/SearchBar";
 import FloatingButton from "../../components/FloatingButton";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
 export default function MyClasses({ navigation }) {
   const userId = FIREBASE_AUTH.currentUser.uid;
@@ -36,40 +37,40 @@ export default function MyClasses({ navigation }) {
     navigation.navigate("addClass");
   };
 
-  useEffect(() => {
-    // Define a query to get classes where categorySearch is "Computing" for the current user.
+  // Fetch data function
+  const fetchData = async () => {
     const q = query(
       collection(FIRESTORE_DB, "classes"),
       where("userId", "==", userId)
     );
 
-    const fetchData = async () => {
-      try {
-        const querySnapshot = await getDocs(q);
-        const classesData = [];
+    try {
+      const querySnapshot = await getDocs(q);
+      const classesData = [];
 
-        querySnapshot.forEach((doc) => {
-          // Include the document ID along with the data
-          const classDataWithId = {
-            id: doc.id, // Add the document ID here
-            ...doc.data(),
-          };
+      querySnapshot.forEach((doc) => {
+        const classDataWithId = {
+          id: doc.id,
+          ...doc.data(),
+        };
 
-          classesData.push(classDataWithId);
-        });
-        console.log("classesData: ", classesData);
-        classesData.forEach((classData) => {
-          console.log("id", classData.id);
-        });
-        setData(classesData);
-        setFilteredData(classesData);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
+        classesData.push(classDataWithId);
+      });
 
-    fetchData();
-  }, [userId]);
+      setData(classesData);
+      // console.log("id");
+      setFilteredData(classesData);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  // Use useFocusEffect to fetch data when the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [userId])
+  );
 
   return (
     <View style={styles.container}>
@@ -90,13 +91,17 @@ export default function MyClasses({ navigation }) {
       </View>
 
       <SearchBar handleSearch={handleSearch} searchText={searchText} />
+
       <FlatList
         data={filteredData.length > 0 ? filteredData : data}
         keyExtractor={(item) => item.id}
-        numColumns={2} // Set the number of columns to 2
+        numColumns={2}
         contentContainerStyle={styles.gridContainer}
-        renderItem={({ item }) => <Card item={item} />}
+        renderItem={({ item }) => (
+          <Card item={item} id={item.id} navigation={navigation} />
+        )}
       />
+
       <FloatingButton onPress={handleFloatingButton} />
 
       <BottomNav activeLink={"myClasses"} />
@@ -120,18 +125,14 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   gridContainer: {
-    // flexDirection: "row",
-    // flexWrap: "wrap",
     justifyContent: "space-between",
     padding: 16,
   },
-
   tagsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 16,
   },
-
   newClassTag: {
     color: COLORS.primary,
     fontWeight: "bold",
@@ -139,7 +140,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.green,
     borderRadius: 8,
   },
-
   bookedClassesTag: {
     color: COLORS.darkRed,
     fontWeight: "bold",
@@ -147,12 +147,21 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.tagsRed,
     borderRadius: 8,
   },
-
   completedClassTag: {
     color: COLORS.darkYellow,
     fontWeight: "bold",
     padding: 8,
     backgroundColor: COLORS.tagsYellow,
     borderRadius: 8,
+  },
+  availableClasses: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 10,
+  },
+  boldText: {
+    fontSize: 16,
   },
 });
