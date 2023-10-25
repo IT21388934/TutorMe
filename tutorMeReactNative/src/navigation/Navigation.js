@@ -20,6 +20,9 @@ import StudentHome from "../screens/StudentScreens/StudentHome";
 import SMDetails from "../screens/StudentScreens/StudentMaterialsDetails";
 import StudentProfile from "../screens/StudentScreens/StudentProfile";
 import StudyMaterials from "../screens/StudentScreens/StudyMaterials";
+import MySessions from "../screens/StudentScreens/MySessions";
+import SessionDetails from "../screens/StudentScreens/SessionDetails";
+import EditSession from "../screens/StudentScreens/EditSession";
 
 //tutor
 import AddClass from "../screens/TutorScreens/AddClass";
