@@ -174,9 +174,13 @@ const EditProfile = () => {
             <Text style={styles.title}> Edit Profile</Text>
 
             <View style={styles.buttonImage}>
-              <TouchableOpacity onPress={() => handleImageUpload()}>
+              <TouchableOpacity onPress={() => pickImage()}>
                 <Image
-                  source={require("../../assets/images/profile.png")}
+                  source={
+                    profileImage === null
+                      ? require("../../assets/images/profile.png")
+                      : { uri: profileImage }
+                  }
                   style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
@@ -481,6 +485,7 @@ const styles = StyleSheet.create({
     height: 100,
     resizeMode: "contain",
     marginBottom: 20,
+    borderRadius: 50,
   },
   container: {
     flex: 1,

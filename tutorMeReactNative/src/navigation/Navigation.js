@@ -25,8 +25,6 @@ import SessionDetails from "../screens/StudentScreens/SessionDetails";
 import EditSession from "../screens/StudentScreens/EditSession";
 import ClassDetailsView from "../screens/StudentScreens/ClassDetailsView";
 import SMDetails from "../screens/StudentScreens/StudentMaterialsDetails";
-import StudentProfile from "../screens/StudentScreens/StudentProfile";
-import StudyMaterials from "../screens/StudentScreens/StudyMaterials";
 
 //tutor
 import TutorHome from "../screens/TutorScreens/TutorHome";

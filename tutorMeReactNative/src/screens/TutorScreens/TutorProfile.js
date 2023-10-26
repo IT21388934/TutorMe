@@ -95,9 +95,8 @@ const TutorProfile = ({ navigation }) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={
-                styles.button
-              } /*onPress={() => navigation.navigate("Login")}*/
+              style={styles.button}
+              onPress={() => navigation.navigate("smList")}
             >
               <View style={styles.box}>
                 <Image
