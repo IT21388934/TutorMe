@@ -47,13 +47,33 @@ import AddStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMAdd";
 import EditStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMEdit";
 import StudyMaterialsList from "../screens/TutorScreens/StudyMaterials/SMList";
 import ViewStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMViewDetails";
+import IncompleteForm from "../screens/TutorScreens/IncompleteForm";
+import RestrictedTutorProfile from "../screens/TutorScreens/RestrictedTutorProfile";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function TutorTabs() {
+function IncompleteTutorTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
+      <Tab.Screen name="incompleteHome" component={IncompleteHome} />
+      <Tab.Screen name="incompleteForm" component={IncompleteForm} />
+      <Tab.Screen
+        name="restrictedTutorProfile"
+        component={RestrictedTutorProfile}
+      />
+    </Tab.Navigator>
+  );
+}
+
+function TutorTabs() {
+  const { userData, setUserData } = useContext(UserContext);
+  console.log(userData);
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={() => null}>
+      {userData.isCompleted !== "true" && (
+        <Tab.Screen name="incomplete" component={IncompleteTutorTabs} />
+      )}
       <Tab.Screen name="home" component={TutorHome} />
       <Tab.Screen name="myClasses" component={MyClasses} />
       <Tab.Screen name="calendar" component={MyCalendar} />

@@ -17,6 +17,7 @@ import loginAndSignUpStyle from "../../global/loginAndSignUpStyle";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import BottomNav from "../../components/TutorBottomNav";
+import RestrictedBottomNav from "../../components/RestrictedTutorBottomNav";
 
 const IncompleteHome = () => {
   const navigation = useNavigation();
@@ -41,13 +42,13 @@ const IncompleteHome = () => {
                 </Text>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={() => navigation.navigate("IncompleteForm")}
+                  onPress={() => navigation.navigate("incompleteForm")}
                 >
                   <Text style={styles.buttonText}>Complete Profile</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.buttonText}
-                  onPress={() => navigation.navigate("TutorProfile")}
+                  onPress={() => navigation.navigate("restrictedTutorProfile")}
                 >
                   <Text style={styles.skip}>Skip</Text>
                 </TouchableOpacity>
@@ -56,7 +57,7 @@ const IncompleteHome = () => {
           </View>
         </View>
       </ImageBackground>
-      <BottomNav activeLink="home" />
+      <RestrictedBottomNav activeLink="home" />
     </LinearGradient>
   );
 };
