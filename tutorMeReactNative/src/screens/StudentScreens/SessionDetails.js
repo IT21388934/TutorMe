@@ -23,6 +23,12 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
+import {
+  AlertNotificationRoot,
+  Dialog,
+  Toast,
+  ALERT_TYPE,
+} from "react-native-alert-notification";
 
 const SessionDetails = ({ route, navigation }) => {
   const { sessionData } = route.params;
@@ -70,7 +76,12 @@ const SessionDetails = ({ route, navigation }) => {
         status: "booked",
       });
 
-      alert("Payment complete, thank you!");
+      Dialog.show({
+        type: ALERT_TYPE.SUCCESS,
+        title: "Success",
+        textBody: "Payment Successful!",
+        button: "Close",
+      });
     } catch (error) {
       console.log(error);
       alert(error.message);
@@ -84,126 +95,159 @@ const SessionDetails = ({ route, navigation }) => {
     navigation.goBack();
   };
 
+  const complete = async () => {
+    const sessionDoc = doc(FIRESTORE_DB, "sessions", sessionData.id);
+    await updateDoc(sessionDoc, {
+      status: "completed",
+    });
+
+    alert("Session completed");
+  };
+
   return (
-    <StudentLayout name="Session Details">
-      <ScrollView style={styles.container}>
-        <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-          <View style={styles.tutorInfo}>
-            <Image
-              source={{ uri: sessionData.tutorImage }}
-              style={styles.tutorImage}
-            />
-            <View style={styles.tutorDetails}>
-              <Text style={styles.tutorName}>{sessionData.tutorName}</Text>
-              <Text style={styles.tutorFaculty}>Faculty of Computing</Text>
-              <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
-            </View>
-          </View>
-          <View style={styles.ruler} />
-
-          <Text style={styles.className}>{sessionData.classTitle}</Text>
-          <Text style={styles.classDescription}>
-            {sessionData.classDescription}
-          </Text>
-          <View style={styles.tagContainer}>
-            {sessionData.classTags.map((tag, index) => (
-              <View style={styles.tag} key={index}>
-                <Text style={styles.tagText}>{tag}</Text>
+    <AlertNotificationRoot>
+      <StudentLayout name="Session Details">
+        <ScrollView style={styles.container}>
+          <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+            <View style={styles.tutorInfo}>
+              <Image
+                source={{ uri: sessionData.tutorImage }}
+                style={styles.tutorImage}
+              />
+              <View style={styles.tutorDetails}>
+                <Text style={styles.tutorName}>{sessionData.tutorName}</Text>
+                <Text style={styles.tutorFaculty}>Faculty of Computing</Text>
+                <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
               </View>
-            ))}
-          </View>
-          <View style={styles.ruler} />
-          <View style={styles.sessionInfoContainer}>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Mode</Text>
-              <Text style={styles.value}>{sessionData.mode}</Text>
             </View>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Date</Text>
-              <Text style={styles.value}>{sessionData.date}</Text>
+            <View style={styles.ruler} />
+
+            <Text style={styles.className}>{sessionData.classTitle}</Text>
+            <Text style={styles.classDescription}>
+              {sessionData.classDescription}
+            </Text>
+            <View style={styles.tagContainer}>
+              {sessionData.classTags.map((tag, index) => (
+                <View style={styles.tag} key={index}>
+                  <Text style={styles.tagText}>{tag}</Text>
+                </View>
+              ))}
             </View>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Timeslot</Text>
-              <Text style={styles.value}>{sessionData.timeslot}</Text>
-            </View>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Charges</Text>
-              <Text style={styles.value}>Rs. {sessionData.price}.00</Text>
-            </View>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Participants</Text>
-              <Text style={styles.value}>{sessionData.numOfStudents}</Text>
-            </View>
-            <View style={styles.sessionInfo}>
-              <Text style={styles.label}>Reason</Text>
-              <Text style={styles.value}>{sessionData.reason}</Text>
-            </View>
-          </View>
-          <View style={styles.ruler} />
-          {/* Link */}
-          {sessionData.status == "ready" && (
-            <>
+            <View style={styles.ruler} />
+            <View style={styles.sessionInfoContainer}>
               <View style={styles.sessionInfo}>
-                <Text style={styles.label}>
-                  {sessionData.mode === "Online" ? "Link" : "Location"}
-                </Text>
-                {sessionData.mode === "Online" ? (
-                  <TouchableHighlight
-                    onPress={() =>
-                      Linking.openURL(
-                        "https://www.google.com/search?q=icc&oq=icc&aqs=chrome.0.35i39i650j46i67i131i433i650j69i64j69i59j69i60l4.557j0j7&sourceid=chrome&ie=UTF-8"
-                      )
-                    }
-                  >
-                    <Text style={styles.value}>Link</Text>
-                  </TouchableHighlight>
-                ) : (
-                  <Text style={styles.value}>Hello</Text>
-                )}
+                <Text style={styles.label}>Mode</Text>
+                <Text style={styles.value}>{sessionData.mode}</Text>
               </View>
-              <View style={styles.ruler} />
-            </>
-          )}
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>Date</Text>
+                <Text style={styles.value}>{sessionData.date}</Text>
+              </View>
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>Timeslot</Text>
+                <Text style={styles.value}>{sessionData.timeslot}</Text>
+              </View>
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>Charges</Text>
+                <Text style={styles.value}>Rs. {sessionData.price}.00</Text>
+              </View>
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>Participants</Text>
+                <Text style={styles.value}>{sessionData.numOfStudents}</Text>
+              </View>
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>Reason</Text>
+                <Text style={styles.value}>{sessionData.reason}</Text>
+              </View>
+            </View>
+            <View style={styles.ruler} />
+            {/* Link */}
+            {sessionData.status == "ready" && (
+              <>
+                <View style={styles.sessionInfo}>
+                  <Text style={styles.label}>
+                    {sessionData.mode === "Online" ? "Link" : "Location"}
+                  </Text>
+                  {sessionData.mode === "Online" ? (
+                    <TouchableHighlight
+                      onPress={() => Linking.openURL(sessionData.info)}
+                    >
+                      <Text style={styles.value}>{sessionData.info}</Text>
+                    </TouchableHighlight>
+                  ) : (
+                    <Text style={styles.value}>{sessionData.info}</Text>
+                  )}
+                </View>
+                <View style={styles.ruler} />
+              </>
+            )}
 
-          {sessionData.status == "accepted" && (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={{ ...styles.button, backgroundColor: COLORS.green }}
-                onPress={pay}
-              >
-                <Text style={{ ...styles.buttonText, color: COLORS.white }}>
-                  Pay
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {sessionData.status == "pending" && (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={{ ...styles.button, backgroundColor: COLORS.green }}
-                onPress={() =>
-                  navigation.navigate("editSession", {
-                    sessionData: sessionData,
-                  })
-                }
-              >
-                <Text style={{ ...styles.buttonText, color: COLORS.white }}>
-                  Edit
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ ...styles.button, backgroundColor: "gray" }}
-                onPress={cancel}
-              >
-                <Text style={{ ...styles.buttonText, color: COLORS.white }}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </StripeProvider>
-      </ScrollView>
-    </StudentLayout>
+            {sessionData.status == "declined" && (
+              <>
+                <View style={styles.sessionInfo}>
+                  <Text style={styles.label}>Rejected reason</Text>
+
+                  <Text style={styles.value}>{sessionData.declineReason}</Text>
+                </View>
+                <View style={styles.ruler} />
+              </>
+            )}
+
+            {sessionData.status == "accepted" && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={{ ...styles.button, backgroundColor: COLORS.green }}
+                  onPress={pay}
+                >
+                  <Text style={{ ...styles.buttonText, color: COLORS.white }}>
+                    Pay
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {sessionData.status == "pending" && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={{ ...styles.button, backgroundColor: COLORS.green }}
+                  onPress={() =>
+                    navigation.navigate("editSession", {
+                      sessionData: sessionData,
+                    })
+                  }
+                >
+                  <Text style={{ ...styles.buttonText, color: COLORS.white }}>
+                    Edit
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ ...styles.button, backgroundColor: "gray" }}
+                  onPress={cancel}
+                >
+                  <Text style={{ ...styles.buttonText, color: COLORS.white }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {sessionData.status == "ready" && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  style={{
+                    ...styles.button,
+                    backgroundColor: COLORS.blueButton,
+                  }}
+                  onPress={complete}
+                >
+                  <Text style={{ ...styles.buttonText, color: COLORS.white }}>
+                    Completed
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </StripeProvider>
+        </ScrollView>
+      </StudentLayout>
+    </AlertNotificationRoot>
   );
 };
 
@@ -284,13 +328,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   label: {
-    flex: 0.35,
+    flex: 0.38,
     fontWeight: "500",
     fontSize: 15,
     color: "#333333",
   },
   value: {
-    flex: 0.7,
+    flex: 0.72,
     fontSize: 15,
     color: "#888888",
   },

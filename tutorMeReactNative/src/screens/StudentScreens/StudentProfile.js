@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
+    borderRadius: 45,
   },
   profileContainer: {
     flex: 1,

@@ -67,7 +67,7 @@ export default function ClassDetails({ route, navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate("myClasses")}>
           <Image source={images.backButton} style={styles.backButton} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Booked Class</Text>
+        <Text style={styles.headerText}>Class Details </Text>
       </View>
       <View style={styles.container}>
         <ScrollView>
@@ -119,23 +119,24 @@ export default function ClassDetails({ route, navigation }) {
               <SessionSlot key={index} sessionSlot={sessionSlot} />
             ))}
           </View>
+
+          <View style={styles.rowContainer}>
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              onPress={() => showDeleteConfirmation()}
+            >
+              <Image source={trash} style={{ width: 24, height: 24 }} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.editBtn}
+              onPress={() =>
+                navigation.navigate("editClassDetails", { item: item })
+              }
+            >
+              <Image source={editIcon} style={{ width: 24, height: 24 }} />
+            </TouchableOpacity>
+          </View>
         </ScrollView>
-        <View style={styles.rowContainer}>
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            onPress={() => showDeleteConfirmation()}
-          >
-            <Image source={trash} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.editBtn}
-            onPress={() =>
-              navigation.navigate("editClassDetails", { item: item })
-            }
-          >
-            <Image source={editIcon} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-        </View>
       </View>
       <BottomNav activeLink={activeLink} />
 
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   headerText: {
     flex: 1,
     textAlign: "center",
-    fontWeight: "bold",
+    fontWeight: "500",
     fontSize: 20,
     color: COLORS.white,
   },
@@ -314,7 +315,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cancelButton: {
-    backgroundColor: COLORS.grayButton,
+    backgroundColor: COLORS.green,
     padding: 10,
     borderRadius: 10,
     width: 120,

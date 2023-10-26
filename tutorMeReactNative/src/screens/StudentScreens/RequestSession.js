@@ -19,6 +19,12 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { addDoc, collection } from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
+import {
+  AlertNotificationRoot,
+  Dialog,
+  Toast,
+  ALERT_TYPE,
+} from "react-native-alert-notification";
 
 const RequestSession = ({ route }) => {
   const { classDetails } = route.params;
@@ -114,159 +120,169 @@ const RequestSession = ({ route }) => {
       submittedAt: new Date(),
     });
 
-    alert("Session requested");
+    Dialog.show({
+      type: ALERT_TYPE.SUCCESS,
+      title: "Session requested",
+      textBody:
+        "Your tutor will review your booking request. Please wait for their confirmation.",
+      button: "Close",
+    });
     setDate();
     setReason("");
   };
 
   return (
-    <StudentLayout name="Requesting Session">
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.tutorInfo}>
-            <Image
-              source={{ uri: classDetails.profilePicture }}
-              style={styles.tutorImage}
-            />
-            <View style={styles.tutorDetails}>
-              <Text style={styles.tutorName}>
-                {classDetails.tutorFirstName + " " + classDetails.tutorLastName}
-              </Text>
-              <Text style={styles.tutorFaculty}>Faculty of Computing</Text>
-              <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
-            </View>
-          </View>
-          <View style={styles.ruler} />
-          <Text style={styles.className}>{classDetails.classTitle}</Text>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>
-              Price per session: Rs. {classDetails.price}.00
-            </Text>
-          </View>
-          <View style={styles.formContainer}>
-            <Text>
-              Date{!isDateValid && <Text style={styles.error}>*</Text>}
-            </Text>
-            <View style={styles.dateInputField}>
-              <TextInput
-                style={styles.dateInput}
-                placeholder="Select a date"
-                placeholderTextColor={COLORS.darkGray}
-                value={date ? date.toLocaleDateString() : ""}
-                editable={false}
+    <AlertNotificationRoot>
+      <StudentLayout name="Requesting Session">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.container}
+        >
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <View style={styles.tutorInfo}>
+              <Image
+                source={{ uri: classDetails.profilePicture }}
+                style={styles.tutorImage}
               />
-              <View>
-                <FontAwesome
-                  name="calendar"
-                  size={24}
-                  color="black"
-                  style={styles.dateInputFieldIcon}
-                  onPress={() => setShowDatePicker(true)}
-                />
-                {showDatePicker && (
-                  <DateTimePicker
-                    value={date || new Date()}
-                    minimumDate={new Date()} // Disable past dates
-                    mode="date"
-                    onChange={handleDateChange}
-                  />
-                )}
-              </View>
-            </View>
-            {date && (
-              <>
-                <Text>
-                  Timeslot
-                  {!isTimeSlotValid && <Text style={styles.error}>*</Text>}
+              <View style={styles.tutorDetails}>
+                <Text style={styles.tutorName}>
+                  {classDetails.tutorFirstName +
+                    " " +
+                    classDetails.tutorLastName}
                 </Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={timeslot}
-                    onValueChange={(itemValue) => setTimeslot(itemValue)}
-                  >
-                    {/* Map the time slots for the selected day to Picker.Item components */}
-                    {getTimeSlotsForDay(date).map((timeSlot, index) => (
-                      <Picker.Item
-                        key={index}
-                        label={`${timeSlot.startTime} - ${timeSlot.endTime}`}
-                        value={`${timeSlot.startTime} - ${timeSlot.endTime}`}
-                      />
-                    ))}
-                  </Picker>
-                </View>
-              </>
-            )}
-            <Text>
-              Reason{!isReasonValid && <Text style={styles.error}>*</Text>}
-            </Text>
-            <TextInput
-              value={reason}
-              onChangeText={(text) => setReason(text)}
-              style={styles.textarea}
-              multiline={true}
-              numberOfLines={4}
-            />
-            <View style={styles.formBottom}>
-              <View style={styles.countInputContainer}>
-                <Text>Number of students</Text>
-                <View style={styles.countInputField}>
-                  <FontAwesome
-                    name="minus-circle"
-                    size={26}
-                    color={COLORS.green}
-                    style={styles.countInputFieldIcon}
-                    onPress={() => {
-                      if (numStudents > 1) {
-                        setNumStudents(numStudents - 1);
-                      }
-                    }}
-                  />
-                  <TextInput
-                    value={numStudents.toString()}
-                    onChangeText={(text) => {
-                      const parsedNum = parseInt(text, 10);
-                      if (!isNaN(parsedNum)) {
-                        setNumStudents(Math.max(1, parsedNum));
-                      }
-                    }}
-                    keyboardType="numeric"
-                    style={styles.countInput}
-                  />
-                  <FontAwesome
-                    name="plus-circle"
-                    size={26}
-                    color={COLORS.green}
-                    style={styles.countInputFieldIcon}
-                    onPress={() => setNumStudents(numStudents + 1)}
-                  />
-                </View>
-              </View>
-              <View style={styles.pickerInputContainer}>
-                <Text>Mode</Text>
-                <View style={styles.pickerContainer}>
-                  <Picker
-                    selectedValue={mode}
-                    onValueChange={(itemValue) => setMode(itemValue)}
-                  >
-                    <Picker.Item label="Online" value="Online" />
-                    <Picker.Item label="In-person" value="In-person" />
-                  </Picker>
-                </View>
+                <Text style={styles.tutorFaculty}>Faculty of Computing</Text>
+                <Text style={styles.tutorYear}>3rd year 2nd semester</Text>
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress={handleFormSubmit}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </StudentLayout>
+            <View style={styles.ruler} />
+            <Text style={styles.className}>{classDetails.classTitle}</Text>
+            <View style={styles.priceContainer}>
+              <Text style={styles.price}>
+                Price per session: Rs. {classDetails.price}.00
+              </Text>
+            </View>
+            <View style={styles.formContainer}>
+              <Text>
+                Date{!isDateValid && <Text style={styles.error}>*</Text>}
+              </Text>
+              <View style={styles.dateInputField}>
+                <TextInput
+                  style={styles.dateInput}
+                  placeholder="Select a date"
+                  placeholderTextColor={COLORS.darkGray}
+                  value={date ? date.toLocaleDateString() : ""}
+                  editable={false}
+                />
+                <View>
+                  <FontAwesome
+                    name="calendar"
+                    size={24}
+                    color="black"
+                    style={styles.dateInputFieldIcon}
+                    onPress={() => setShowDatePicker(true)}
+                  />
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={date || new Date()}
+                      minimumDate={new Date()} // Disable past dates
+                      mode="date"
+                      onChange={handleDateChange}
+                    />
+                  )}
+                </View>
+              </View>
+              {date && (
+                <>
+                  <Text>
+                    Timeslot
+                    {!isTimeSlotValid && <Text style={styles.error}>*</Text>}
+                  </Text>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={timeslot}
+                      onValueChange={(itemValue) => setTimeslot(itemValue)}
+                    >
+                      {/* Map the time slots for the selected day to Picker.Item components */}
+                      {getTimeSlotsForDay(date).map((timeSlot, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={`${timeSlot.startTime} - ${timeSlot.endTime}`}
+                          value={`${timeSlot.startTime} - ${timeSlot.endTime}`}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+                </>
+              )}
+              <Text>
+                Reason{!isReasonValid && <Text style={styles.error}>*</Text>}
+              </Text>
+              <TextInput
+                value={reason}
+                onChangeText={(text) => setReason(text)}
+                style={styles.textarea}
+                multiline={true}
+                numberOfLines={4}
+              />
+              <View style={styles.formBottom}>
+                <View style={styles.countInputContainer}>
+                  <Text>Number of students</Text>
+                  <View style={styles.countInputField}>
+                    <FontAwesome
+                      name="minus-circle"
+                      size={26}
+                      color={COLORS.green}
+                      style={styles.countInputFieldIcon}
+                      onPress={() => {
+                        if (numStudents > 1) {
+                          setNumStudents(numStudents - 1);
+                        }
+                      }}
+                    />
+                    <TextInput
+                      value={numStudents.toString()}
+                      onChangeText={(text) => {
+                        const parsedNum = parseInt(text, 10);
+                        if (!isNaN(parsedNum)) {
+                          setNumStudents(Math.max(1, parsedNum));
+                        }
+                      }}
+                      keyboardType="numeric"
+                      style={styles.countInput}
+                    />
+                    <FontAwesome
+                      name="plus-circle"
+                      size={26}
+                      color={COLORS.green}
+                      style={styles.countInputFieldIcon}
+                      onPress={() => setNumStudents(numStudents + 1)}
+                    />
+                  </View>
+                </View>
+                <View style={styles.pickerInputContainer}>
+                  <Text>Mode</Text>
+                  <View style={styles.pickerContainer}>
+                    <Picker
+                      selectedValue={mode}
+                      onValueChange={(itemValue) => setMode(itemValue)}
+                    >
+                      <Picker.Item label="Online" value="Online" />
+                      <Picker.Item label="In-person" value="In-person" />
+                    </Picker>
+                  </View>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handleFormSubmit}
+              >
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </StudentLayout>
+    </AlertNotificationRoot>
   );
 };
 

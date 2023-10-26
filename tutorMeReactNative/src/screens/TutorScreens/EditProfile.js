@@ -86,7 +86,7 @@ const EditProfile = () => {
           setStudentId(userData.studentId || "");
           setAcademicYear(userData.academicYear || "");
           setSemester(userData.semester || "");
-          setFaculty(userData.faculty || "");
+          setFaculty(userData.faculty);
           setSpecialization(userData.specialization || "");
         } else {
           console.log("Document does not exist.");
