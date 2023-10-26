@@ -61,7 +61,11 @@ const StudyMaterialsDetails = () => {
 			).downloadAsync();
 
 			if ((await downloadedFile).status != 200) {
-				alert("Download Error");
+				Toast.show({
+					type: ALERT_TYPE.DANGER,
+					title: "Error",
+					textBody: "Downlad failed..!!",
+				});
 			}
 
 			const permissions =
@@ -94,10 +98,11 @@ const StudyMaterialsDetails = () => {
 				await updateDoc(docRef, { downloads: values.downloads + 1 });
 				setValues({ ...values, downloads: values.downloads + 1 });
 				setDownloading(false);
-				AlertCustom(
-					"Download PDF",
-					`Download Completed. PDF is saved to your device.`
-				);
+				Toast.show({
+					type: ALERT_TYPE.SUCCESS,
+					title: "Download Complete",
+					textBody: "File downloaded successfully..!!",
+				});
 			} catch (e) {
 				console.log(e);
 			}
@@ -297,7 +302,7 @@ export default StudyMaterialsDetails;
 
 const styles = StyleSheet.create({
 	buttonSubmit: {
-		backgroundColor: COLORS.green,
+		backgroundColor: COLORS.blueButton,
 		borderRadius: 10,
 		height: 40,
 		marginTop: 25,
