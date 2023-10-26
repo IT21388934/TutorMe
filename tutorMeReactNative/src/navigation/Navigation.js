@@ -24,6 +24,9 @@ import MySessions from "../screens/StudentScreens/MySessions";
 import SessionDetails from "../screens/StudentScreens/SessionDetails";
 import EditSession from "../screens/StudentScreens/EditSession";
 import ClassDetailsView from "../screens/StudentScreens/ClassDetailsView";
+import SMDetails from "../screens/StudentScreens/StudentMaterialsDetails";
+import StudentProfile from "../screens/StudentScreens/StudentProfile";
+import StudyMaterials from "../screens/StudentScreens/StudyMaterials";
 
 //tutor
 import TutorHome from "../screens/TutorScreens/TutorHome";
@@ -42,6 +45,10 @@ import CompletedClasses from "../screens/TutorScreens/CompletedClasses";
 import EditProfile from "../screens/TutorScreens/EditProfile";
 import ForgetPassword from "../screens/ForgetPassword";
 import IncompleteHome from "../screens/TutorScreens/IncompleteHome";
+import AddStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMAdd";
+import EditStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMEdit";
+import StudyMaterialsList from "../screens/TutorScreens/StudyMaterials/SMList";
+import ViewStudyMaterial from "../screens/TutorScreens/StudyMaterials/SMViewDetails";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -62,6 +69,10 @@ function TutorTabs() {
       <Tab.Screen name="bookedClasses" component={BookedClasses} />
       <Tab.Screen name="singleBooked" component={SingleBooked} />
       <Tab.Screen name="completedClasses" component={CompletedClasses} />
+      <Tab.Screen name="smList" component={StudyMaterialsList} />
+      <Tab.Screen name="smAdd" component={AddStudyMaterial} />
+      <Tab.Screen name="smEdit" component={EditStudyMaterial} />
+      <Tab.Screen name="smView" component={ViewStudyMaterial} />
     </Tab.Navigator>
   );
 }
@@ -86,6 +97,7 @@ function StudentTabs() {
       <Tab.Screen name="search" component={CategorySearch} />
       <Tab.Screen name="studyMaterials" component={StudyMaterials} />
       <Tab.Screen name="profile" component={StudentProfile} />
+      <Tab.Screen name="smView" component={SMDetails} />
     </Tab.Navigator>
   );
 }
