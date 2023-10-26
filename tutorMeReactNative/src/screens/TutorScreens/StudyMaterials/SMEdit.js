@@ -8,6 +8,7 @@ import {
 	ActivityIndicator,
 	Alert,
 	Image,
+	Modal,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -15,6 +16,12 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import {
+	ALERT_TYPE,
+	AlertNotificationRoot,
+	Dialog,
+	Toast,
+} from "react-native-alert-notification";
 import { FIRESTORE_DB } from "../../../../FirebaseConfig";
 import { COLORS } from "../../../constants/theme";
 import { TutorFragment } from "../../../layouts/TutorFragment";
@@ -29,6 +36,15 @@ const SMEdit = () => {
 	const [isLoading, setIsLoading] = useState();
 	const [selectedImage, setSelectedImage] = useState();
 	const [selectedPDF, setSelectedPDF] = useState();
+	const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+
+	const showDeleteConfirmation = () => {
+		setDeleteModalVisible(true);
+	};
+
+	const hideDeleteConfirmation = () => {
+		setDeleteModalVisible(false);
+	};
 
 	// item values
 	const [values, setValues] = useState({
@@ -62,22 +78,21 @@ const SMEdit = () => {
 			selectedImage == null ||
 			selectedPDF == null
 		) {
-			Alert.alert(
-				"Form Validation",
-				"!!..Please complete all required fields.",
-				[
-					{
-						text: "OK",
-						style: "cancel",
-					},
-				],
-				{ cancelable: false }
-			);
+			Toast.show({
+				type: ALERT_TYPE.WARNING,
+				title: "Warning",
+				textBody: "!!..Please complete all required fields.",
+			});
 		} else {
 			const docRef = doc(FIRESTORE_DB, `studyMaterials/${route.params.id}`);
 			await updateDoc(docRef, values);
-			navigation.navigate("smList");
+			Toast.show({
+				type: ALERT_TYPE.SUCCESS,
+				title: "Success",
+				textBody: "Operation Successful.!!",
+			});
 			setIsLoading(false);
+			navigation.navigate("smList");
 		}
 	};
 
@@ -165,204 +180,244 @@ const SMEdit = () => {
 	};
 
 	return (
-		<TutorFragment activeLink="profile">
-			{/*  start header */}
-			<View
-				style={{
-					backgroundColor: COLORS.green,
-					height: "10%",
-					flexDirection: "row",
-					alignContent: "center",
-					justifyContent: "center",
-				}}
-			>
-				<Text
-					style={{
-						color: "white",
-						paddingVertical: 19,
-						paddingHorizontal: 125,
-						fontSize: 25,
-					}}
-				>
-					Edit Details
-				</Text>
-				<TouchableOpacity
-					style={styles.buttonDelete}
-					onPress={() => deleteAlertFunc()}
-				>
-					<Text
-						style={{
-							paddingLeft: 10,
-							fontWeight: "bold",
-							color: "white",
-							fontSize: 25,
-						}}
-					>
-						🗑
-					</Text>
-				</TouchableOpacity>
-			</View>
-			{/*  end header */}
-
-			{/*  start content */}
-			<ScrollView
-				style={{
-					marginTop: "40px",
-					padding: 10,
-				}}
-			>
-				{/* Text Input for Book Name */}
-				<Text style={styles.inputLabel}>Title: </Text>
-				<TextInput
-					id="smTitle"
-					class="smTitle"
-					style={styles.input}
-					placeholder="📖  |  Title"
-					placeholderTextColor={COLORS.darkGray}
-					onChangeText={(text) => setValues({ ...values, title: text })}
-					value={values.title}
-				/>
-
-				{/* Text Input for Description */}
-				<Text style={styles.inputLabel}>Description: </Text>
-				<TextInput
-					id="smDesc"
-					class="smDesc"
-					style={styles.input}
-					placeholder="📖  |  Description"
-					placeholderTextColor={COLORS.darkGray}
-					multiline={true}
-					numberOfLines={5}
-					onChangeText={(text) => setValues({ ...values, desc: text })}
-					value={values.desc}
-				/>
-
-				{/* Picker Input for Category */}
-				<Text style={styles.inputLabel}>Category: </Text>
-				<Picker
-					selectedValue={values.category}
-					style={styles.input}
-					onValueChange={(itemValue) => categoryFunc(itemValue)}
-				>
-					<Picker.Item label="🗂 | Select Category" value="Category" />
-					<Picker.Item label="Mathematics" value="Mathematics" />
-					<Picker.Item label="English" value="English" />
-					<Picker.Item label="Computer Science" value="Computer Science" />
-					<Picker.Item label="Biology" value="Biology" />
-					<Picker.Item label="Engineering" value="Engineering" />
-					<Picker.Item label="Other" value="Other" />
-				</Picker>
-
-				{/* Upload Image */}
-				<TouchableOpacity
-					style={styles.buttonImage}
-					onPress={() => pickImage()}
-				>
-					{selectedImage ? (
-						<Text style={styles.buttonText}> ✔ Upload Image</Text>
-					) : (
-						<Text style={styles.buttonText}>Upload Image</Text>
-					)}
-				</TouchableOpacity>
-				{selectedImage ? (
+		<AlertNotificationRoot>
+			<>
+				<TutorFragment activeLink="profile">
+					{/*  start header */}
 					<View
 						style={{
-							flexDirection: "column",
-							alignItems: "center",
-							marginTop: 5,
+							backgroundColor: COLORS.green,
+							height: "10%",
+							flexDirection: "row",
+							alignContent: "center",
+							justifyContent: "center",
 						}}
 					>
-						<Image
-							resizeMode="contain"
+						<Text
 							style={{
-								width: 100,
-								height: 100,
-								borderRadius: 10,
-								marginTop: 5,
+								color: "white",
+								paddingVertical: 19,
+								paddingHorizontal: 125,
+								fontSize: 25,
 							}}
-							source={{
-								uri: selectedImage,
-							}}
+						>
+							Edit Details
+						</Text>
+						<TouchableOpacity
+							style={styles.buttonDelete}
+							onPress={() => showDeleteConfirmation()}
+						>
+							<Text
+								style={{
+									paddingLeft: 10,
+									fontWeight: "bold",
+									color: "white",
+									fontSize: 25,
+								}}
+							>
+								🗑
+							</Text>
+						</TouchableOpacity>
+					</View>
+					{/*  end header */}
+
+					{/*  start content */}
+					<ScrollView
+						style={{
+							marginTop: "40px",
+							padding: 10,
+						}}
+					>
+						{/* Text Input for Book Name */}
+						<Text style={styles.inputLabel}>Title: </Text>
+						<TextInput
+							id="smTitle"
+							class="smTitle"
+							style={styles.input}
+							placeholder="📖  |  Title"
+							placeholderTextColor={COLORS.darkGray}
+							onChangeText={(text) =>
+								setValues({ ...values, title: text })
+							}
+							value={values.title}
 						/>
-					</View>
-				) : (
-					<View
-						style={{
-							flexDirection: "column",
-							alignItems: "center",
-							marginTop: 5,
-						}}
-					>
-						<Text>Add Image</Text>
-					</View>
-				)}
 
-				{/* upload document */}
-				<TouchableOpacity
-					style={styles.buttonImage}
-					onPress={() => pickDocument()}
+						{/* Text Input for Description */}
+						<Text style={styles.inputLabel}>Description: </Text>
+						<TextInput
+							id="smDesc"
+							class="smDesc"
+							style={styles.input}
+							placeholder="📖  |  Description"
+							placeholderTextColor={COLORS.darkGray}
+							multiline={true}
+							numberOfLines={5}
+							onChangeText={(text) =>
+								setValues({ ...values, desc: text })
+							}
+							value={values.desc}
+						/>
+
+						{/* Picker Input for Category */}
+						<Text style={styles.inputLabel}>Category: </Text>
+						<Picker
+							selectedValue={values.category}
+							style={styles.input}
+							onValueChange={(itemValue) => categoryFunc(itemValue)}
+						>
+							<Picker.Item
+								label="🗂 | Select Category"
+								value="Category"
+							/>
+							<Picker.Item label="Mathematics" value="Mathematics" />
+							<Picker.Item label="English" value="English" />
+							<Picker.Item
+								label="Computer Science"
+								value="Computer Science"
+							/>
+							<Picker.Item label="Biology" value="Biology" />
+							<Picker.Item label="Engineering" value="Engineering" />
+							<Picker.Item label="Other" value="Other" />
+						</Picker>
+
+						{/* Upload Image */}
+						<TouchableOpacity
+							style={styles.buttonImage}
+							onPress={() => pickImage()}
+						>
+							{selectedImage ? (
+								<Text style={styles.buttonText}> ✔ Upload Image</Text>
+							) : (
+								<Text style={styles.buttonText}>Upload Image</Text>
+							)}
+						</TouchableOpacity>
+						{selectedImage ? (
+							<View
+								style={{
+									flexDirection: "column",
+									alignItems: "center",
+									marginTop: 5,
+								}}
+							>
+								<Image
+									resizeMode="contain"
+									style={{
+										width: 100,
+										height: 100,
+										borderRadius: 10,
+										marginTop: 5,
+									}}
+									source={{
+										uri: selectedImage,
+									}}
+								/>
+							</View>
+						) : (
+							<View
+								style={{
+									flexDirection: "column",
+									alignItems: "center",
+									marginTop: 5,
+								}}
+							>
+								<Text>Add Image</Text>
+							</View>
+						)}
+
+						{/* upload document */}
+						<TouchableOpacity
+							style={styles.buttonImage}
+							onPress={() => pickDocument()}
+						>
+							{selectedPDF ? (
+								<Text style={styles.buttonText}> ✔ Upload PDF</Text>
+							) : (
+								<Text style={styles.buttonText}>Upload PDF</Text>
+							)}
+						</TouchableOpacity>
+						{selectedPDF ? (
+							<View
+								style={{
+									flexDirection: "column",
+									alignItems: "center",
+									marginTop: 5,
+								}}
+							>
+								<Text>PDF File: {selectedPDF}</Text>
+							</View>
+						) : (
+							<View
+								style={{
+									flexDirection: "column",
+									alignItems: "center",
+									marginTop: 5,
+								}}
+							>
+								<Text>Add PDF File</Text>
+							</View>
+						)}
+
+						{/* Edit button */}
+						<TouchableOpacity
+							style={styles.buttonSubmit}
+							onPress={() => editFunc()}
+						>
+							{isLoading ? (
+								<ActivityIndicator size="large" color="white" />
+							) : (
+								<Text style={styles.buttonText}>Submit</Text>
+							)}
+						</TouchableOpacity>
+
+						{/* Reset button */}
+						<TouchableOpacity
+							style={styles.buttonReset}
+							onPress={() => clearAll()}
+						>
+							<Text style={styles.buttonText}>Reset</Text>
+						</TouchableOpacity>
+
+						{/* Cancel button */}
+						<TouchableOpacity
+							style={styles.buttonCancel}
+							onPress={() => navigation.navigate("smList")}
+						>
+							<Text style={styles.buttonText}>Cancel</Text>
+						</TouchableOpacity>
+
+						<TouchableOpacity style={styles.buttonInvisble}>
+							<Text style={styles.buttonText}></Text>
+						</TouchableOpacity>
+					</ScrollView>
+				</TutorFragment>
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={isDeleteModalVisible}
+					onRequestClose={() => hideDeleteConfirmation()}
 				>
-					{selectedPDF ? (
-						<Text style={styles.buttonText}> ✔ Upload PDF</Text>
-					) : (
-						<Text style={styles.buttonText}>Upload PDF</Text>
-					)}
-				</TouchableOpacity>
-				{selectedPDF ? (
-					<View
-						style={{
-							flexDirection: "column",
-							alignItems: "center",
-							marginTop: 5,
-						}}
-					>
-						<Text>PDF File: {selectedPDF}</Text>
+					<View style={styles.modalContainer}>
+						<View style={styles.modalContent}>
+							<Text style={styles.modalText}>
+								Are you sure you want to delete this class?
+							</Text>
+							<TouchableOpacity
+								style={styles.confirmButton}
+								onPress={() => deleteFun()}
+							>
+								<Text style={styles.confirmButtonText}>Confirm</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.cancelButton}
+								onPress={() => hideDeleteConfirmation()}
+							>
+								<Text style={styles.cancelButtonText}>Cancel</Text>
+							</TouchableOpacity>
+						</View>
 					</View>
-				) : (
-					<View
-						style={{
-							flexDirection: "column",
-							alignItems: "center",
-							marginTop: 5,
-						}}
-					>
-						<Text>Add PDF File</Text>
-					</View>
-				)}
-
-				{/* Edit button */}
-				<TouchableOpacity
-					style={styles.buttonSubmit}
-					onPress={() => editFunc()}
-				>
-					{isLoading ? (
-						<ActivityIndicator size="large" color="white" />
-					) : (
-						<Text style={styles.buttonText}>Submit</Text>
-					)}
-				</TouchableOpacity>
-
-				{/* Reset button */}
-				<TouchableOpacity
-					style={styles.buttonReset}
-					onPress={() => clearAll()}
-				>
-					<Text style={styles.buttonText}>Reset</Text>
-				</TouchableOpacity>
-
-				{/* Cancel button */}
-				<TouchableOpacity
-					style={styles.buttonCancel}
-					onPress={() => navigation.navigate("smList")}
-				>
-					<Text style={styles.buttonText}>Cancel</Text>
-				</TouchableOpacity>
-
-				<TouchableOpacity style={styles.buttonInvisble}>
-					<Text style={styles.buttonText}></Text>
-				</TouchableOpacity>
-			</ScrollView>
-		</TutorFragment>
+				</Modal>
+			</>
+		</AlertNotificationRoot>
 	);
 };
 
@@ -438,6 +493,48 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+	// Delete Confirmation Modal
+	modalContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(0, 0, 0, 0.7)",
+	},
+	modalContent: {
+		backgroundColor: COLORS.white,
+		borderRadius: 10,
+		padding: 20,
+		width: 300,
+		alignItems: "center",
+	},
+	modalText: {
+		fontSize: 18,
+		marginBottom: 20,
+		textAlign: "center",
+	},
+	confirmButton: {
+		backgroundColor: COLORS.redButton,
+		padding: 10,
+		borderRadius: 10,
+		width: 120,
+		alignItems: "center",
+		marginBottom: 10,
+	},
+	confirmButtonText: {
+		color: COLORS.white,
+		fontWeight: "bold",
+	},
+	cancelButton: {
+		backgroundColor: COLORS.green,
+		padding: 10,
+		borderRadius: 10,
+		width: 120,
+		alignItems: "center",
+	},
+	cancelButtonText: {
+		color: COLORS.white,
+		fontWeight: "bold",
 	},
 	inputLabel: { fontWeight: "bold", fontSize: 15, marginVertical: 5 },
 });
