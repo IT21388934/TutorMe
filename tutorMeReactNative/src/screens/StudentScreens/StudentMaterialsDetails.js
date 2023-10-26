@@ -14,6 +14,7 @@ import {
 	View,
 } from "react-native";
 import { FIRESTORE_DB } from "../../../FirebaseConfig";
+import images from "../../constants/images";
 import { COLORS } from "../../constants/theme";
 import { StudentFragment } from "../../layouts/StudentFragment";
 
@@ -123,13 +124,29 @@ const StudyMaterialsDetails = () => {
 
 	return (
 		<StudentFragment activeLink="studyMaterials">
-			<View style={{ backgroundColor: COLORS.green, height: "10%" }}>
+			<View
+				style={{
+					backgroundColor: COLORS.green,
+					height: "10%",
+					display: "flex",
+					alignItems: "center",
+					flexDirection: "row",
+				}}
+			>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("studyMaterials")}
+				>
+					<Image
+						source={images.backButton}
+						style={{ width: 25, height: 25, marginLeft: 5 }}
+					></Image>
+				</TouchableOpacity>
 				<Text
 					style={{
 						color: "white",
-						paddingVertical: 19,
-						paddingHorizontal: 120,
 						fontSize: 25,
+						textAlign: "center",
+						paddingHorizontal: 95,
 					}}
 				>
 					View Details
@@ -271,12 +288,6 @@ const StudyMaterialsDetails = () => {
 				) : (
 					<Text style={styles.buttonText}> 📥 Download</Text>
 				)}
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.buttonCancel}
-				onPress={() => navigation.navigate("studyMaterials")}
-			>
-				<Text style={styles.buttonText}>⬅ Back</Text>
 			</TouchableOpacity>
 		</StudentFragment>
 	);
