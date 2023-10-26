@@ -14,6 +14,7 @@ import {
 	View,
 } from "react-native";
 import { FIRESTORE_DB } from "../../../../FirebaseConfig";
+import images from "../../../constants/images";
 import { COLORS } from "../../../constants/theme";
 import { TutorFragment } from "../../../layouts/TutorFragment";
 
@@ -118,13 +119,29 @@ const SMView = () => {
 	// render screen
 	return (
 		<TutorFragment activeLink="profile">
-			<View style={{ backgroundColor: COLORS.green, height: "10%" }}>
+			<View
+				style={{
+					backgroundColor: COLORS.green,
+					height: "10%",
+					display: "flex",
+					alignItems: "center",
+					flexDirection: "row",
+				}}
+			>
+				<TouchableOpacity
+					onPress={() => navigation.navigate("studyMaterials")}
+				>
+					<Image
+						source={images.backButton}
+						style={{ width: 25, height: 25, marginLeft: 5 }}
+					></Image>
+				</TouchableOpacity>
 				<Text
 					style={{
 						color: "white",
-						paddingVertical: 19,
-						paddingHorizontal: 120,
 						fontSize: 25,
+						textAlign: "center",
+						paddingHorizontal: 95,
 					}}
 				>
 					View Details
@@ -256,12 +273,6 @@ const SMView = () => {
 			>
 				<Text style={styles.buttonTextEdit}>Edit</Text>
 			</TouchableOpacity>
-			<TouchableOpacity
-				style={styles.buttonEdit}
-				onPress={() => navigation.navigate("smList")}
-			>
-				<Text style={styles.buttonTextCancel}>Back</Text>
-			</TouchableOpacity>
 		</TutorFragment>
 	);
 };
@@ -282,19 +293,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 	},
 	buttonCancel: {
-		backgroundColor: COLORS.warningYellow,
-		borderRadius: 10,
-		height: 40,
-		marginTop: 10,
-		justifyContent: "center",
-		marginHorizontal: 10,
-		marginBottom: 10,
-
-		marginTop: 10,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	buttonEdit: {
 		backgroundColor: COLORS.blueButton,
 		borderRadius: 10,
 		height: 40,
@@ -302,6 +300,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		marginHorizontal: 10,
 		marginBottom: 10,
+
 		marginTop: 10,
 		alignItems: "center",
 		justifyContent: "center",
