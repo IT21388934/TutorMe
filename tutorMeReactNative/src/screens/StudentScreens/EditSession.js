@@ -32,6 +32,11 @@ const EditSession = ({ route, navigation }) => {
 
   const { userData, setUserData } = useContext(UserContext);
 
+  // Define state variables to track field validation
+  const [isDateValid, setIsDateValid] = useState(true);
+  const [isTimeSlotValid, setIsTimeSlotValid] = useState(true);
+  const [isReasonValid, setIsReasonValid] = useState(true);
+
   const [classDetails, setClassDetails] = useState();
 
   useEffect(() => {
@@ -95,6 +100,28 @@ const EditSession = ({ route, navigation }) => {
   };
 
   const handleFormSubmit = async () => {
+    // Add field validation logic
+    if (!date) {
+      setIsDateValid(false);
+    } else {
+      setIsDateValid(true);
+    }
+    if (!timeslot) {
+      setIsTimeSlotValid(false);
+    } else {
+      setIsTimeSlotValid(true);
+    }
+    if (!reason) {
+      setIsReasonValid(false);
+    } else {
+      setIsReasonValid(true);
+    }
+
+    // Check if all required fields are valid
+    if (!date || !timeslot || !reason) {
+      return; // Stop the submission if any required field is empty
+    }
+
     const sessionDoc = doc(FIRESTORE_DB, "sessions", sessionData.id);
     await updateDoc(sessionDoc, {
       tutorName: classDetails.tutorFirstName + " " + classDetails.tutorLastName,
@@ -147,7 +174,9 @@ const EditSession = ({ route, navigation }) => {
                 </Text>
               </View>
               <View style={styles.formContainer}>
-                <Text>Date</Text>
+                <Text>
+                  Date{!isDateValid && <Text style={styles.error}>*</Text>}
+                </Text>
                 <View style={styles.dateInputField}>
                   <TextInput
                     style={styles.dateInput}
@@ -176,7 +205,10 @@ const EditSession = ({ route, navigation }) => {
                 </View>
                 {date && (
                   <>
-                    <Text>Timeslot</Text>
+                    <Text>
+                      Timeslot
+                      {!isTimeSlotValid && <Text style={styles.error}>*</Text>}
+                    </Text>
                     <View style={styles.pickerContainer}>
                       <Picker
                         selectedValue={timeslot}
@@ -194,7 +226,9 @@ const EditSession = ({ route, navigation }) => {
                     </View>
                   </>
                 )}
-                <Text>Reason</Text>
+                <Text>
+                  Reason{!isReasonValid && <Text style={styles.error}>*</Text>}
+                </Text>
                 <TextInput
                   value={reason}
                   onChangeText={(text) => setReason(text)}
@@ -413,6 +447,9 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "500",
+  },
+  error: {
+    color: "red",
   },
 });
 

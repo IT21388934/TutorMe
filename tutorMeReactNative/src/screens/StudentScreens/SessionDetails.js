@@ -5,6 +5,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  TouchableHighlight,
+  Linking,
 } from "react-native";
 import React, { useState, useContext } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
@@ -138,6 +140,31 @@ const SessionDetails = ({ route, navigation }) => {
             </View>
           </View>
           <View style={styles.ruler} />
+          {/* Link */}
+          {sessionData.status == "ready" && (
+            <>
+              <View style={styles.sessionInfo}>
+                <Text style={styles.label}>
+                  {sessionData.mode === "Online" ? "Link" : "Location"}
+                </Text>
+                {sessionData.mode === "Online" ? (
+                  <TouchableHighlight
+                    onPress={() =>
+                      Linking.openURL(
+                        "https://www.google.com/search?q=icc&oq=icc&aqs=chrome.0.35i39i650j46i67i131i433i650j69i64j69i59j69i60l4.557j0j7&sourceid=chrome&ie=UTF-8"
+                      )
+                    }
+                  >
+                    <Text style={styles.value}>Link</Text>
+                  </TouchableHighlight>
+                ) : (
+                  <Text style={styles.value}>Hello</Text>
+                )}
+              </View>
+              <View style={styles.ruler} />
+            </>
+          )}
+
           {sessionData.status == "accepted" && (
             <View style={styles.buttonContainer}>
               <TouchableOpacity

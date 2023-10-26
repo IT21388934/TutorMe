@@ -4,6 +4,8 @@ import {
   Text,
   View,
   TouchableOpacity,
+  ScrollView,
+  Image,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import StudentLayout from "../../layouts/StudentLayout";
@@ -17,6 +19,8 @@ import {
   where,
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
+import { Picker } from "@react-native-picker/picker";
+import images from "../../constants/images";
 
 const statuses = [
   {
@@ -56,6 +60,10 @@ const MySessions = ({ navigation }) => {
 
   const [statusCounts, setStatusCounts] = useState({});
 
+  const [selectedStatus, setSelectedStatus] = useState("All"); // Initialize with "All" to show all sessions
+
+  const [isSessionsEmpty, setIsSessionsEmpty] = useState(false);
+
   useEffect(() => {
     const currentUserID = FIREBASE_AUTH.currentUser.uid;
 
@@ -88,52 +96,64 @@ const MySessions = ({ navigation }) => {
           }
         });
         setStatusCounts(counts);
+
+        setIsSessionsEmpty(sessions.length === 0);
       },
     });
     return () => subscriber();
   }, []);
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.session}
-      onPress={() =>
-        navigation.navigate("sessionDetails", { sessionData: item })
-      }
-    >
-      <View style={styles.sessionLeft}>
-        <Text style={styles.class}>
-          {item.classTitle.length > 30
-            ? item.classTitle.slice(0, 26) + "..."
-            : item.classTitle}
-        </Text>
-        <Text style={styles.tutor}>{item.tutorName}</Text>
-        <Text style={styles.time}>
-          {item.date} | {item.timeslot}
-        </Text>
-      </View>
-      <View style={styles.sessionRight}>
-        <View
-          style={{
-            ...styles.statusContainer,
-            backgroundColor: statuses.find(
-              (statusInfo) => statusInfo.status === item.status
-            ).bgColor,
-          }}
+  const renderItem = ({ item }) => {
+    if (selectedStatus === "All" || selectedStatus === item.status) {
+      return (
+        <TouchableOpacity
+          style={styles.session}
+          onPress={() =>
+            navigation.navigate("sessionDetails", { sessionData: item })
+          }
         >
-          <Text
-            style={{
-              ...styles.statusText,
-              color: statuses.find(
-                (statusInfo) => statusInfo.status === item.status
-              ).textColor,
-            }}
-          >
-            {item.status}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+          <View style={styles.sessionLeft}>
+            <Text style={styles.class}>
+              {item.classTitle.length > 30
+                ? item.classTitle.slice(0, 26) + "..."
+                : item.classTitle}
+            </Text>
+            <Text style={styles.tutor}>{item.tutorName}</Text>
+            <Text style={styles.time}>
+              {item.date} | {item.timeslot}
+            </Text>
+          </View>
+          <View style={styles.sessionRight}>
+            <View
+              style={{
+                ...styles.statusContainer,
+                backgroundColor: statuses.find(
+                  (statusInfo) => statusInfo.status === item.status
+                ).bgColor,
+              }}
+            >
+              <Text
+                style={{
+                  ...styles.statusText,
+                  color: statuses.find(
+                    (statusInfo) => statusInfo.status === item.status
+                  ).textColor,
+                }}
+              >
+                {item.status}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
+  // Add the capitalizeFirstLetter function
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
   return (
     <StudentLayout name="My sessions">
@@ -165,13 +185,37 @@ const MySessions = ({ navigation }) => {
           })}
         </View>
 
-        <View style={styles.sessionsContainer}>
-          <FlatList
-            data={sessions}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedStatus}
+            onValueChange={(itemValue) => setSelectedStatus(itemValue)}
+          >
+            <Picker.Item label="All" value="All" />
+            {statuses.map((statusInfo) => (
+              <Picker.Item
+                label={capitalizeFirstLetter(statusInfo.status)}
+                value={statusInfo.status}
+                key={statusInfo.status}
+              />
+            ))}
+          </Picker>
         </View>
+
+        {/* <View style={styles.sessionsContainer}> */}
+        <FlatList
+          data={sessions}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          style={styles.sessionsContainer}
+        />
+        {/* </View> */}
+
+        {isSessionsEmpty && (
+          <View style={styles.emptyContainer}>
+            <Image source={images.empty} style={styles.empty} />
+            {/* <Text style={styles.emptyText}>No sessions</Text> */}
+          </View>
+        )}
       </View>
     </StudentLayout>
   );
@@ -182,6 +226,7 @@ export default MySessions;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    paddingBottom: 0,
   },
   notificationsContainer: {
     display: "flex",
@@ -199,7 +244,8 @@ const styles = StyleSheet.create({
   },
   notificationText: {},
   sessionsContainer: {
-    paddingVertical: 15,
+    marginTop: 10,
+    marginBottom: 150,
   },
   session: {
     display: "flex",
@@ -230,4 +276,25 @@ const styles = StyleSheet.create({
     width: 90,
   },
   statusText: {},
+  pickerContainer: {
+    borderColor: COLORS.gray,
+    backgroundColor: COLORS.white,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  empty: {
+    width: 160,
+    height: 160,
+  },
+  emptyText: {
+    fontSize: 18,
+    marginTop: 20,
+    color: "#808080",
+    textAlign: "center",
+  },
 });

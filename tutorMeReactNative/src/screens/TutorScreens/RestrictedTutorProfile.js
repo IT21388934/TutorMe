@@ -13,12 +13,13 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import UserContext from "../../contexts/UserContext";
 import { COLORS } from "../../constants/theme";
+import { RestrictedTutorFragment } from "../../layouts/RestrictedTutorFragment";
 
-const TutorProfile = ({ navigation }) => {
+const RestrictedTutorProfile = ({ navigation }) => {
   const { userData, setUserData } = useContext(UserContext);
 
   return (
-    <TutorFragment activeLink="profile">
+    <RestrictedTutorFragment activeLink="profile">
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View style={styles.tutorInfo}>
@@ -70,7 +71,7 @@ const TutorProfile = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("myClasses")}
+              // onPress={() => navigation.navigate("myClasses")}
             >
               <View style={styles.box}>
                 <Image
@@ -83,7 +84,7 @@ const TutorProfile = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("calendar")}
+              // onPress={() => navigation.navigate("calendar")}
             >
               <View style={styles.box}>
                 <Image
@@ -96,7 +97,7 @@ const TutorProfile = ({ navigation }) => {
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate("smList")}
+              // onPress={() => navigation.navigate("smList")}
             >
               <View style={styles.box}>
                 <Image
@@ -136,11 +137,11 @@ const TutorProfile = ({ navigation }) => {
           </View>
         </ScrollView>
       </SafeAreaView>
-    </TutorFragment>
+    </RestrictedTutorFragment>
   );
 };
 
-export default TutorProfile;
+export default RestrictedTutorProfile;
 
 const styles = StyleSheet.create({
   container: {

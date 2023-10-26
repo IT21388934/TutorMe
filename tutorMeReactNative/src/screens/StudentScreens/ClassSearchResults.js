@@ -79,39 +79,86 @@ const ClassSearchResults = ({ route, navigation }) => {
     return () => subscriber();
   }, []);
 
-  const renderClassItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.classCard}
-      onPress={() =>
-        navigation.navigate("requestSession", { classDetails: item })
-      }
-    >
-      <View style={styles.classCardTop}>
-        <Text style={styles.classTutor}>
-          {item.tutorFirstName + " " + item.tutorLastName}
-        </Text>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: item.profilePicture }}
-            style={styles.tutorImage}
-          />
+  const renderClassItem = ({ item, index }) => {
+    const isOddCount = filteredClasses.length % 2 === 1;
+    const isLastItem = index === filteredClasses.length - 1;
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.classCard,
+          {
+            flex:
+              isOddCount && isLastItem
+                ? 0.45 // Set flex to 0.4 for the last item in odd count
+                : 1, // Set flex to 1 for other items
+          },
+        ]}
+        onPress={() =>
+          navigation.navigate("classDetails", { classDetails: item })
+        }
+      >
+        <View style={styles.classCardTop}>
+          <Text style={styles.classTutor}>
+            {item.tutorFirstName + " " + item.tutorLastName}
+          </Text>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: item.profilePicture }}
+              style={styles.tutorImage}
+            />
+          </View>
         </View>
-      </View>
-      <Text style={styles.className}>
-        {item.classTitle.length > 30
-          ? item.classTitle.slice(0, 30) + "..."
-          : item.classTitle}
-      </Text>
-      <View style={styles.classCardBottom}>
-        <Text style={styles.classDuration}>
-          {item.duration + " " + (item.duration > 1 ? "Hours" : "Hour")}
+        <Text style={styles.className}>
+          {item.classTitle.length > 30
+            ? item.classTitle.slice(0, 30) + "..."
+            : item.classTitle}
         </Text>
-        <View style={styles.classPriceContainer}>
-          <Text style={styles.classPrice}>Rs. {item.price}</Text>
+        <View style={styles.classCardBottom}>
+          <Text style={styles.classDuration}>
+            {item.duration + " " + (item.duration > 1 ? "Hours" : "Hour")}
+          </Text>
+          <View style={styles.classPriceContainer}>
+            <Text style={styles.classPrice}>Rs. {item.price}</Text>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
+
+  // const renderClassItem = ({ item }) => (
+  //   <TouchableOpacity
+  //     style={styles.classCard}
+  //     onPress={() =>
+  //       navigation.navigate("classDetails", { classDetails: item })
+  //     }
+  //   >
+  //     <View style={styles.classCardTop}>
+  //       <Text style={styles.classTutor}>
+  //         {item.tutorFirstName + " " + item.tutorLastName}
+  //       </Text>
+  //       <View style={styles.imageContainer}>
+  //         <Image
+  //           source={{ uri: item.profilePicture }}
+  //           style={styles.tutorImage}
+  //         />
+  //       </View>
+  //     </View>
+  //     <Text style={styles.className}>
+  //       {item.classTitle.length > 30
+  //         ? item.classTitle.slice(0, 30) + "..."
+  //         : item.classTitle}
+  //     </Text>
+  //     <View style={styles.classCardBottom}>
+  //       <Text style={styles.classDuration}>
+  //         {item.duration + " " + (item.duration > 1 ? "Hours" : "Hour")}
+  //       </Text>
+  //       <View style={styles.classPriceContainer}>
+  //         <Text style={styles.classPrice}>Rs. {item.price}</Text>
+  //       </View>
+  //     </View>
+  //   </TouchableOpacity>
+  // );
 
   return (
     <StudentFragment activeLink="">

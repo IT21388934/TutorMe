@@ -86,6 +86,7 @@ const TutorSignUp = () => {
             email,
             contactNumber,
             role: "tutor",
+            balance: 0,
           });
 
           saveUserProfileImage(profileImage);
