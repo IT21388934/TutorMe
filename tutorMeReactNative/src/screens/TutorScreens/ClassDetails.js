@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Modal,
 } from "react-native";
 import { COLORS } from "../../constants/theme";
 import images from "../../constants/images";
@@ -20,10 +21,12 @@ import SessionSlot from "../../components/SessionSlot";
 import { editIcon, trash } from "../../constants/images";
 
 import UserContext from "../../contexts/UserContext";
+import { collection, doc, deleteDoc } from "firebase/firestore";
+import { FIRESTORE_DB } from "../../../FirebaseConfig";
 
 export default function ClassDetails({ route, navigation }) {
-  const { item } = route.params; // Extract 'item' from route.params
-  // console.log("id", item.id);
+  const { item } = route.params;
+  const classId = item.id;
   const activeLink = "MyClasses";
 
   const { userData, setUserData } = useContext(UserContext);
@@ -31,14 +34,32 @@ export default function ClassDetails({ route, navigation }) {
 
   const [tags, setTags] = useState([]);
   const [sessionSlot, setSessionSlot] = useState([]);
+  const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  // Use useEffect to listen for changes in route.params and update the state
   useEffect(() => {
     setData(item);
-    // console.log("tags", data.tags);
     setTags(item.tags);
     setSessionSlot(item.timeSlots);
   }, [item]);
+
+  const showDeleteConfirmation = () => {
+    setDeleteModalVisible(true);
+  };
+
+  const hideDeleteConfirmation = () => {
+    setDeleteModalVisible(false);
+  };
+
+  const handleDeleteClass = async (classId) => {
+    try {
+      const classRef = doc(collection(FIRESTORE_DB, "classes"), classId);
+      await deleteDoc(classRef);
+      hideDeleteConfirmation();
+      navigation.navigate("myClasses");
+    } catch (error) {
+      console.error("Error deleting class:", error);
+    }
+  };
 
   return (
     <>
@@ -100,9 +121,12 @@ export default function ClassDetails({ route, navigation }) {
           </View>
         </ScrollView>
         <View style={styles.rowContainer}>
-          <View style={styles.deleteBtn}>
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            onPress={() => showDeleteConfirmation()}
+          >
             <Image source={trash} style={{ width: 24, height: 24 }} />
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.editBtn}
             onPress={() =>
@@ -114,6 +138,35 @@ export default function ClassDetails({ route, navigation }) {
         </View>
       </View>
       <BottomNav activeLink={activeLink} />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isDeleteModalVisible}
+        onRequestClose={() => hideDeleteConfirmation()}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>
+              Are you sure you want to delete this class?
+            </Text>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => {
+                handleDeleteClass(classId);
+              }}
+            >
+              <Text style={styles.confirmButtonText}>Confirm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => hideDeleteConfirmation()}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
@@ -174,8 +227,6 @@ const styles = StyleSheet.create({
   priceContainer: {
     paddingLeft: 16,
     borderRadius: 10,
-    // width: "40%",
-    // alignContent: "center",
     alignItems: "flex-start",
   },
 
@@ -190,6 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+
   sessionBar: {
     backgroundColor: COLORS.white,
     paddingLeft: 16,
@@ -209,7 +261,6 @@ const styles = StyleSheet.create({
   },
   sessionInfo: {
     color: COLORS.darkGreen,
-    // fontWeight: "bold",
     fontSize: 16,
   },
   deleteBtn: {
@@ -229,5 +280,48 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  // Delete Confirmation Modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+  modalContent: {
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    padding: 20,
+    width: 300,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  confirmButton: {
+    backgroundColor: COLORS.redButton,
+    padding: 10,
+    borderRadius: 10,
+    width: 120,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  confirmButtonText: {
+    color: COLORS.white,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    backgroundColor: COLORS.grayButton,
+    padding: 10,
+    borderRadius: 10,
+    width: 120,
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    color: COLORS.white,
+    fontWeight: "bold",
   },
 });

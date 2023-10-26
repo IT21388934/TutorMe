@@ -156,7 +156,7 @@ export default function AddClass({ navigation }) {
           textBody: "An error occurred while adding the class",
         });
       }
-      navigation.navigate("myClasses");
+      // navigation.navigate("myClasses");
     }
   };
 

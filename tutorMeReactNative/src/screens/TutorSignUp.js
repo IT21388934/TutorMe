@@ -64,10 +64,23 @@ const TutorSignUp = () => {
     contactNumber,
     confirmPassword
   ) => {
+    if (
+      !email ||
+      !password ||
+      !firstName ||
+      !lastName ||
+      !contactNumber ||
+      !confirmPassword ||
+      !profileImage
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
       return;
     }
+
     try {
       await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password)
         .then(async (userCredential) => {

@@ -22,7 +22,12 @@ export default function Login({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   const loginUser = async () => {
+    if (!email || !password) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     setLoading(true);
+
     try {
       await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
     } catch (error) {

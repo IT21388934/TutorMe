@@ -66,6 +66,19 @@ const IncompleteForm = () => {
   };
 
   const saveUserData = async () => {
+    if (
+      !gender ||
+      !date ||
+      !address ||
+      !studentId ||
+      !academicYear ||
+      !semester ||
+      !faculty ||
+      !specialization
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     try {
       const userDoc = doc(FIRESTORE_DB, "users", FIREBASE_AUTH.currentUser.uid);
       await updateDoc(userDoc, {
