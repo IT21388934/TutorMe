@@ -42,7 +42,7 @@ yarn install
 3. Configure Firebase:
 
    - Create a Firebase project on the [Firebase Console](https://console.firebase.google.com/).
-   - Add your Firebase configuration to the app by replacing the configuration in the `src/config/firebase.js` file.
+   - Add your Firebase configuration to the app by replacing the configuration in the `src/config/FirebaseConfig.js` file.
 
 4. Run the app on your local development environment.
 
