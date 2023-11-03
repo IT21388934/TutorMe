@@ -24,7 +24,7 @@ To get started with the Tutor Me mobile application, follow these steps:
 1. Clone the repository to your local machine.
 
 ```
-git clone <repository_url>
+git clone https://github.com/IT21388934/TutorMe.git
 ```
 
 2. Install the required dependencies using npm or yarn.
